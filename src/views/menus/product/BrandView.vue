@@ -9,9 +9,9 @@
 </template>
 
 <script setup lang='ts'>
-import { onMounted, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { Brand } from '@/interface/product'
-import { getBrandPagesApi } from '@/api/product/category-api'
+import { getBrandPagesApi } from '@/api/product/brand-api'
 
 const brandList = ref<Array<Brand>>()
 const data = reactive({

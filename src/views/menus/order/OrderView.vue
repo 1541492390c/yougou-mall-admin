@@ -54,6 +54,10 @@
 				</template>
 			</el-table-column>
 		</el-table>
+		<div class='pagination'>
+			<el-pagination :page-size='10' :current-page='currentPage' :total='total' layout='prev, pager, next' background
+										 small @current-change='handleCurrentPageChange' />
+		</div>
 	</div>
 </template>
 
@@ -64,14 +68,15 @@ import { getOrderPagesApi } from '@/api/order/order-api'
 
 const tableData = ref<Array<Order>>([])
 const total = ref<number>(0)
+const currentPage = ref<number>(1)
 
 onMounted(() => {
-	getTableData()
+	getTableData(1)
 })
 
 // 获取表格信息
-const getTableData = (): void => {
-	getOrderPagesApi().then((res) => {
+const getTableData = (pageNum: number): void => {
+	getOrderPagesApi(pageNum).then((res) => {
 		if (res) {
 			console.log(res)
 			tableData.value = res.data.list
@@ -107,6 +112,11 @@ const transformOrderState = computed(() => (value: number): string => {
 			return '--'
 	}
 })
+
+const handleCurrentPageChange = (value: number): void => {
+	currentPage.value = value
+	getTableData(value)
+}
 </script>
 
 <style scoped lang='scss'>

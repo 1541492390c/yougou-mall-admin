@@ -10,6 +10,7 @@
 					<span>首页</span>
 				</template>
 			</el-menu-item>
+
 			<!--用户员管理-->
 			<el-menu-item index='user'>
 				<template #title>
@@ -19,6 +20,7 @@
 					<span>用户管理</span>
 				</template>
 			</el-menu-item>
+
 			<!--订单管理-->
 			<el-menu-item index='order'>
 				<template #title>
@@ -28,6 +30,7 @@
 					<span>订单管理</span>
 				</template>
 			</el-menu-item>
+
 			<!--商品管理-->
 			<el-sub-menu index='1'>
 				<template #title>
@@ -48,7 +51,16 @@
 				<el-menu-item index='product'>
 					<span>商品管理</span>
 				</el-menu-item>
+				<!--商品管理--添加商品-->
+				<el-menu-item index='add_product'>
+					<span>添加商品</span>
+				</el-menu-item>
+				<!--商品管理--添加品牌-->
+				<el-menu-item index='add_brand'>
+					<span>添加品牌</span>
+				</el-menu-item>
 			</el-sub-menu>
+
 			<!--平台管理-->
 			<el-sub-menu index='2'>
 				<template #title>
@@ -58,10 +70,25 @@
 					<span>平台管理</span>
 				</template>
 				<!--平台管理--轮播图管理-->
-				<el-menu-item>
+				<el-menu-item index='banner'>
 					<span>轮播图管理</span>
 				</el-menu-item>
+				<el-menu-item index='feedback_type'>
+					<!--平台管理--反馈类型管理-->
+					<span>反馈类型管理</span>
+				</el-menu-item>
 			</el-sub-menu>
+
+			<!--财务管理-->
+			<el-sub-menu index='3'>
+				<template #title>
+					<el-icon>
+						<coin />
+					</el-icon>
+					<span>财务管理</span>
+				</template>
+			</el-sub-menu>
+
 			<!--用户反馈-->
 			<el-menu-item index='feedback'>
 				<el-icon>
@@ -74,7 +101,7 @@
 </template>
 
 <script setup lang='ts'>
-import { House, User, Box, Monitor, Van, Message } from '@element-plus/icons-vue'
+import { House, User, Box, Monitor, Van, Message, Coin } from '@element-plus/icons-vue'
 import { onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 

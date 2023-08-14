@@ -21,8 +21,7 @@ enum AddrModalTypeEnum {
 // 上传资源类型
 enum UploadFileTypeEnum {
     AVATAR = 1,
-    FEEDBACK,
-    COMMENT
+    PRODUCT = 4
 }
 
 export { ResponseCodeEnum, BannerTypeEnum, AddrModalTypeEnum, UploadFileTypeEnum }

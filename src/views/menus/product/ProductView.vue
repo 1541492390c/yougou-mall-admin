@@ -23,11 +23,17 @@
 			</el-table-column>
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
-					<el-button @click='openUpdateProductDialog(scope.row.productId)' type='info' text class='button'>编辑</el-button>
+					<el-button @click='openUpdateProductDialog(scope.row.productId)' type='info' text class='button'>
+						编辑
+					</el-button>
 					<el-button type='primary' text class='button'>删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
+		<div class='pagination'>
+			<el-pagination :page-size='10' :current-page='currentPage' :total='total' layout='prev, pager, next' background
+										 small @current-change='handleCurrentPageChange' />
+		</div>
 
 		<update-product-dialog :show='showUpdateProductDialog' :product-id='currentProductId'
 													 @close-dialog='closeUpdateProductDialog' />
@@ -44,13 +50,14 @@ const tableData = ref<Array<Product>>([])
 const total = ref<number>(0)
 const showUpdateProductDialog = ref<boolean>(false)
 const currentProductId = ref<string>('')
+const currentPage = ref<number>(1)
 
 onMounted(() => {
-	getTableData()
+	getTableData(1)
 })
 
-const getTableData = (): void => {
-	getProductPagesApi(1, 10, false, false, undefined).then((res) => {
+const getTableData = (pageNum: number): void => {
+	getProductPagesApi(pageNum, 10, undefined, undefined, undefined).then((res) => {
 		if (res) {
 			tableData.value = res.data.list
 			total.value = res.data.total
@@ -58,6 +65,11 @@ const getTableData = (): void => {
 	}).catch((err) => {
 		console.log(err)
 	})
+}
+
+const handleCurrentPageChange = (value: number): void => {
+	currentPage.value = value
+	getTableData(value)
 }
 
 // 解析布尔值

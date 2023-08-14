@@ -52,6 +52,36 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'product',
                 name: 'product',
                 component: () => import('@/views/menus/product/ProductView.vue')
+            },
+            // 商品-添加商品
+            {
+                path: 'add_product',
+                name: 'add_product',
+                component: () => import('@/views/menus/product/AddProductView.vue')
+            },
+            // 商品-添加品牌
+            {
+                path: 'add_brand',
+                name: 'add_brand',
+                component: () => import('@/views/menus/product/AddBrandView.vue')
+            },
+            // 平台-轮播图
+            {
+                path: 'banner',
+                name: 'banner',
+                component: () => import('@/views/menus/platform/BannerView.vue')
+            },
+            // 平台-反馈类型
+            {
+                path: 'feedback_type',
+                name: 'feedback_type',
+                component: () => import('@/views/menus/platform/FeedbackTypeView.vue')
+            },
+            // 财务-优惠券
+            {
+                path: 'coupon',
+                name: 'coupon',
+                component: () => import('@/views/menus/payment/CouponView.vue')
             }
         ]
     }

@@ -30,7 +30,7 @@ html, body, #app, .el-container {
 .pagination {
   margin-top: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 /*:root {*/

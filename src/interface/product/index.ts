@@ -9,9 +9,9 @@ interface Brand {
 
 // 商品
 interface Product {
-    productId: string,
+    productId?: string,
     brandId?: number,
-    state: number,
+    state?: number,
     price: number,
     discountPrice: number,
     categoryNode: string,
@@ -41,10 +41,10 @@ interface AttrValue {
 
 // 商品属性
 interface Attr {
-    attrId: number,
-    productId: number,
+    attrId?: number,
+    productId?: string,
     name: string,
-    attrValueList: Array<AttrValue>
+    attrValueList?: Array<AttrValue>
 }
 
 // 商品sku规格
