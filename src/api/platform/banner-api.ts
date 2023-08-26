@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios'
 import request from '@/request'
+import { Banner } from '@/interface/platform'
 
 // 获取轮播图分页信息接口
 const getBannerPagesApi = (pageNum: number = 1, pageSize: number = 5): Promise<AxiosResponse> => {
@@ -13,4 +14,13 @@ const getBannerPagesApi = (pageNum: number = 1, pageSize: number = 5): Promise<A
     }, true)
 }
 
-export { getBannerPagesApi }
+// 保存轮播图接口
+const saveBannerApi = (value: Banner): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/platform/banner/save',
+        method: 'POST',
+        data: value
+    }, true)
+}
+
+export { getBannerPagesApi, saveBannerApi }

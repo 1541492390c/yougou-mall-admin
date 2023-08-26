@@ -73,9 +73,13 @@
 				<el-menu-item index='banner'>
 					<span>轮播图管理</span>
 				</el-menu-item>
+				<!--平台管理--反馈类型管理-->
 				<el-menu-item index='feedback_type'>
-					<!--平台管理--反馈类型管理-->
 					<span>反馈类型管理</span>
+				</el-menu-item>
+				<!--平台管理--添加轮播图-->
+				<el-menu-item index='add_banner'>
+					<span>添加轮播图</span>
 				</el-menu-item>
 			</el-sub-menu>
 
@@ -87,6 +91,10 @@
 					</el-icon>
 					<span>财务管理</span>
 				</template>
+				<!--财务管理--优惠券管理-->
+				<el-menu-item index='coupon'>
+					<span>优惠券管理</span>
+				</el-menu-item>
 			</el-sub-menu>
 
 			<!--用户反馈-->
@@ -101,57 +109,57 @@
 </template>
 
 <script setup lang='ts'>
-import { House, User, Box, Monitor, Van, Message, Coin } from '@element-plus/icons-vue'
+import { Box, Coin, House, Message, Monitor, User, Van } from '@element-plus/icons-vue'
 import { onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 
 onMounted(() => {
-    getCurrentIndex()
+	getCurrentIndex()
 })
 
 const route = useRoute()
 const data = reactive({
-    index: ''
+	index: ''
 })
 
 const getCurrentIndex = (): void => {
-    data.index = route.path.substring(route.path.lastIndexOf('/') + 1)
+	data.index = route.path.substring(route.path.lastIndexOf('/') + 1)
 }
 </script>
 
 <style scoped lang='scss'>
 .main {
-  background-color: #222222;
+	background-color: #222222;
 }
 
 .el-menu {
-  width: 100%;
-  border-right: none;
-  background-color: #222222;
+	width: 100%;
+	border-right: none;
+	background-color: #222222;
 }
 
 .el-menu-item {
-  background-color: #222222;
-  color: white;
+	background-color: #222222;
+	color: white;
 
-  &:hover {
-    background-color: #f13a3a;
-    color: white;
-  }
+	&:hover {
+		background-color: #f13a3a;
+		color: white;
+	}
 }
 
 .el-menu-item.is-active {
-  background-color: #f13a3a;
-  color: white;
+	background-color: #f13a3a;
+	color: white;
 }
 
 :deep(.el-sub-menu__title) {
-  color: white;
-  background-color: #222222;
+	color: white;
+	background-color: #222222;
 
-  &:hover {
-    color: white;
-    background-color: #f13a3a;
-  }
+	&:hover {
+		color: white;
+		background-color: #f13a3a;
+	}
 }
 </style>

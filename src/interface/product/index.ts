@@ -34,8 +34,8 @@ interface Category {
 
 // 商品属性值
 interface AttrValue {
-    attrValueId: number,
-    attrId: number,
+    attrValueId?: number,
+    attrId?: number,
     name: string
 }
 

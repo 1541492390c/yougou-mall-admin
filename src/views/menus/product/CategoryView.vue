@@ -10,6 +10,7 @@
 			<!--一级分类-->
 			<div class='category-card'>
 				<el-scrollbar class='category-card-item' height='550'>
+					<el-empty v-if='!categoryList || categoryList.length === 0' description='暂无数据' />
 					<div v-for='(item, index) in categoryList' :key='index' class='category-item'>
 						<div class='category-item-content'>
 							<el-radio v-model='currentCategory' @change='(value) => handleSelect(value, item.level)'

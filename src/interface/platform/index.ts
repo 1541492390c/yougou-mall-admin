@@ -1,6 +1,6 @@
 // 轮播图
 interface Banner {
-    bannerId: number,
+    bannerId?: number,
     description?: string,
     link: string,
     img: string
