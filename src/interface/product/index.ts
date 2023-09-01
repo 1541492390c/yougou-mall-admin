@@ -25,7 +25,7 @@ interface Product {
 // 商品分类
 interface Category {
     categoryId: number,
-    parentId: string,
+    parentId: number,
     level: number,
     name: string,
     node: string,

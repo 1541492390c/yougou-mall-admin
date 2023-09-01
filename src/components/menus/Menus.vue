@@ -1,131 +1,54 @@
-<template>
-	<div class='main'>
-		<el-menu router :default-active='data.index'>
-			<!--首页-->
-			<el-menu-item index='index'>
-				<template #title>
-					<el-icon>
-						<house />
-					</el-icon>
-					<span>首页</span>
-				</template>
-			</el-menu-item>
-
-			<!--用户员管理-->
-			<el-menu-item index='user'>
-				<template #title>
-					<el-icon>
-						<user />
-					</el-icon>
-					<span>用户管理</span>
-				</template>
-			</el-menu-item>
-
-			<!--订单管理-->
-			<el-menu-item index='order'>
-				<template #title>
-					<el-icon>
-						<van />
-					</el-icon>
-					<span>订单管理</span>
-				</template>
-			</el-menu-item>
-
-			<!--商品管理-->
-			<el-sub-menu index='1'>
-				<template #title>
-					<el-icon>
-						<box />
-					</el-icon>
-					<span>商品管理</span>
-				</template>
-				<!--商品管理--分类管理-->
-				<el-menu-item index='category'>
-					<span>分类管理</span>
-				</el-menu-item>
-				<!--商品管理--品牌管理-->
-				<el-menu-item index='brand'>
-					<span>品牌管理</span>
-				</el-menu-item>
-				<!--商品管理--商品管理-->
-				<el-menu-item index='product'>
-					<span>商品管理</span>
-				</el-menu-item>
-				<!--商品管理--添加商品-->
-				<el-menu-item index='add_product'>
-					<span>添加商品</span>
-				</el-menu-item>
-				<!--商品管理--添加品牌-->
-				<el-menu-item index='add_brand'>
-					<span>添加品牌</span>
-				</el-menu-item>
-			</el-sub-menu>
-
-			<!--平台管理-->
-			<el-sub-menu index='2'>
-				<template #title>
-					<el-icon>
-						<monitor />
-					</el-icon>
-					<span>平台管理</span>
-				</template>
-				<!--平台管理--轮播图管理-->
-				<el-menu-item index='banner'>
-					<span>轮播图管理</span>
-				</el-menu-item>
-				<!--平台管理--反馈类型管理-->
-				<el-menu-item index='feedback_type'>
-					<span>反馈类型管理</span>
-				</el-menu-item>
-				<!--平台管理--添加轮播图-->
-				<el-menu-item index='add_banner'>
-					<span>添加轮播图</span>
-				</el-menu-item>
-			</el-sub-menu>
-
-			<!--财务管理-->
-			<el-sub-menu index='3'>
-				<template #title>
-					<el-icon>
-						<coin />
-					</el-icon>
-					<span>财务管理</span>
-				</template>
-				<!--财务管理--优惠券管理-->
-				<el-menu-item index='coupon'>
-					<span>优惠券管理</span>
-				</el-menu-item>
-			</el-sub-menu>
-
-			<!--用户反馈-->
-			<el-menu-item index='feedback'>
-				<el-icon>
-					<message />
-				</el-icon>
-				<span>用户反馈</span>
-			</el-menu-item>
-		</el-menu>
-	</div>
-</template>
-
 <script setup lang='ts'>
-import { Box, Coin, House, Message, Monitor, User, Van } from '@element-plus/icons-vue'
-import { onMounted, reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import { RouteRecordRaw, useRouter } from 'vue-router'
+
+const router = useRouter()
+const menuItems = ref<Array<RouteRecordRaw>>([])
+const currentIndex = ref<string>('')
 
 onMounted(() => {
+	transformRoutes()
 	getCurrentIndex()
 })
 
-const route = useRoute()
-const data = reactive({
-	index: ''
+watch(router.currentRoute, () => {
+	getCurrentIndex()
 })
 
+// 解析路由
+const transformRoutes = (): void => {
+	menuItems.value = router.options.routes[1].children as Array<RouteRecordRaw>
+}
+
+// 获取当前索引
 const getCurrentIndex = (): void => {
-	data.index = route.path.substring(route.path.lastIndexOf('/') + 1)
+	currentIndex.value = router.currentRoute.value.fullPath
 }
 </script>
+
+<template>
+	<div class='main'>
+		<el-menu router :default-active='currentIndex'>
+			<template v-for='(item, index) in menuItems' :key='index'>
+				<!--展开菜单-->
+				<el-sub-menu v-if='item.children && item.children.length !== 0' :index='item.path'>
+					<template #title>
+						<span>{{item.meta.title}}</span>
+					</template>
+					<!--加载子路由-->
+					<el-menu-item v-for='(child, j) in item.children'
+												:key='j' :index="'/dashboard/' + item.path + '/' + child.path">
+						<span>{{child.meta.title}}</span>
+					</el-menu-item>
+				</el-sub-menu>
+				<!--非展开菜单-->
+				<el-menu-item v-else :index="'/dashboard/' + item.path">
+					<span>{{item.meta.title}}</span>
+				</el-menu-item>
+			</template>
+		</el-menu>
+	</div>
+</template>
 
 <style scoped lang='scss'>
 .main {

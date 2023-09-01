@@ -1,3 +1,60 @@
+<script setup lang='ts'>
+import { computed, onMounted, ref } from 'vue'
+import { Order } from '@/interface/order'
+import { getOrderPagesApi } from '@/api/order/order-api'
+
+const tableData = ref<Array<Order>>([])
+const total = ref<number>(0)
+const currentPage = ref<number>(1)
+
+onMounted(() => {
+	getTableData(1)
+})
+
+// 获取表格信息
+const getTableData = (pageNum: number): void => {
+	getOrderPagesApi(pageNum).then((res) => {
+		if (res) {
+			tableData.value = res.data.list
+			total.value = res.data.total
+		}
+	})
+}
+
+// 解析规格
+const transformSpecs = computed(() => (value: string): string => {
+	let object = JSON.parse(value)
+	let specs: string = ''
+	for (let index in object) {
+		specs += object[index] + ' , '
+	}
+	return specs.substring(0, specs.length - 2)
+})
+
+// 解析订单状态
+const transformOrderState = computed(() => (value: number): string => {
+	switch (value) {
+		case 0:
+			return '已取消'
+		case 1:
+			return '待付款'
+		case 2:
+			return '待发货'
+		case 3:
+			return '配送中'
+		case 4:
+			return '已完成'
+		default:
+			return '--'
+	}
+})
+
+const handleCurrentPageChange = (value: number): void => {
+	currentPage.value = value
+	getTableData(value)
+}
+</script>
+
 <template>
 	<div class='card'>
 		<el-table :data='tableData'>
@@ -49,75 +106,17 @@
 			</el-table-column>
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
-					<el-button v-if='scope.row.state === 2' type='primary' text class='button'>发货</el-button>
-					<el-button v-if='scope.row.state === 4' type='success' text disabled class='button'>该订单已完成</el-button>
+					<el-button v-if='scope.row.state === 2' type='primary' link class='button'>发货</el-button>
+					<el-button v-if='scope.row.state === 4' type='success' link disabled class='button'>该订单已完成</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
 		<div class='pagination'>
-			<el-pagination :page-size='10' :current-page='currentPage' :total='total' layout='prev, pager, next' background
-										 small @current-change='handleCurrentPageChange' />
+			<el-pagination :page-size='10' :current-page='currentPage' :total='total'
+										 small background layout='prev, pager, next' @current-change='handleCurrentPageChange' />
 		</div>
 	</div>
 </template>
-
-<script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue'
-import { Order } from '@/interface/order'
-import { getOrderPagesApi } from '@/api/order/order-api'
-
-const tableData = ref<Array<Order>>([])
-const total = ref<number>(0)
-const currentPage = ref<number>(1)
-
-onMounted(() => {
-	getTableData(1)
-})
-
-// 获取表格信息
-const getTableData = (pageNum: number): void => {
-	getOrderPagesApi(pageNum).then((res) => {
-		if (res) {
-			console.log(res)
-			tableData.value = res.data.list
-			total.value = res.data.total
-		}
-	})
-}
-
-// 解析规格
-const transformSpecs = computed(() => (value: string): string => {
-	let object = JSON.parse(value)
-	let specs: string = ''
-	for (let index in object) {
-		specs += object[index] + ' , '
-	}
-	return specs.substring(0, specs.length - 2)
-})
-
-// 解析订单状态
-const transformOrderState = computed(() => (value: number): string => {
-	switch (value) {
-		case 0:
-			return '已取消'
-		case 1:
-			return '待付款'
-		case 2:
-			return '待发货'
-		case 3:
-			return '配送中'
-		case 4:
-			return '已完成'
-		default:
-			return '--'
-	}
-})
-
-const handleCurrentPageChange = (value: number): void => {
-	currentPage.value = value
-	getTableData(value)
-}
-</script>
 
 <style scoped lang='scss'>
 .order-items {

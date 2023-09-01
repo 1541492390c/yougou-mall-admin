@@ -1,9 +1,9 @@
 <script setup lang='ts'>
+
 </script>
 
 <template>
-	<div>
-		index
+	<div class='card'>
 	</div>
 </template>
 

@@ -1,3 +1,32 @@
+<script setup lang='ts'>
+import { onMounted, ref } from 'vue'
+import { User } from '@/interface/user'
+import ViewHeader from '@/components/header/ViewHeader.vue'
+import Menus from '@/components/menus/Menus.vue'
+import { getUserinfoApi } from '@/api/user/user-api'
+
+onMounted(() => {
+	getUserinfo()
+})
+
+const userinfo = ref<User>()
+
+// watch(() => store.getters.userinfo, (newValue) => {
+//     userinfo.value = newValue
+// 		console.log(newValue)
+// })
+
+const getUserinfo = (): void => {
+	getUserinfoApi().then((res): void => {
+		if (res) {
+			userinfo.value = res.data
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+</script>
+
 <template>
 	<div class='main'>
 		<el-container>
@@ -16,43 +45,12 @@
 	</div>
 </template>
 
-<script setup lang='ts'>
-import { onMounted, ref, watch } from 'vue'
-import { User } from '@/interface/user'
-import { useStore } from 'vuex'
-import ViewHeader from '@/components/header/ViewHeader.vue'
-import Menus from '@/components/menus/Menus.vue'
-import { getUserinfoApi } from '@/api/user'
-
-onMounted(() => {
-    getUserinfo()
-})
-
-const userinfo = ref<User>()
-
-// watch(() => store.getters.userinfo, (newValue) => {
-//     userinfo.value = newValue
-// 		console.log(newValue)
-// })
-
-const getUserinfo = (): void => {
-	getUserinfoApi().then((res): void => {
-		if (res) {
-			userinfo.value = res.data
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-    //store.dispatch('getUserinfo')
-}
-</script>
-
 <style scoped lang='scss'>
 .main {
-  height: 100%;
+	height: 100%;
 }
 
 .menu {
-  width: 200px;
+	width: 200px;
 }
 </style>

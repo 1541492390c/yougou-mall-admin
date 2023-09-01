@@ -1,3 +1,34 @@
+<script setup lang='ts'>
+import { onMounted, ref } from 'vue'
+import { Banner } from '@/interface/platform'
+import { getBannerPagesApi } from '@/api/platform/banner-api'
+
+const tableData = ref<Array<Banner>>([])
+const total = ref<number>(0)
+const currentPage = ref<number>(1)
+
+onMounted(() => {
+	getTableData(currentPage.value)
+})
+
+// 获取轮播图分页信息
+const getTableData = (pageNum: number): void => {
+	getBannerPagesApi(pageNum).then((res) => {
+		if (res) {
+			tableData.value = res.data.list
+			total.value = res.data.total
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+const handleCurrentPageChange = (value: number): void => {
+	currentPage.value = value
+	getTableData(value)
+}
+</script>
+
 <template>
 	<div class='card'>
 		<el-table :data='tableData'>
@@ -37,37 +68,6 @@
 		</div>
 	</div>
 </template>
-
-<script setup lang='ts'>
-import { onMounted, ref } from 'vue'
-import { Banner } from '@/interface/platform'
-import { getBannerPagesApi } from '@/api/platform/banner-api'
-
-const tableData = ref<Array<Banner>>([])
-const total = ref<number>(0)
-const currentPage = ref<number>(1)
-
-onMounted(() => {
-	getTableData(currentPage.value)
-})
-
-// 获取轮播图分页信息
-const getTableData = (pageNum: number): void => {
-	getBannerPagesApi(pageNum).then((res) => {
-		if (res) {
-			tableData.value = res.data.list
-			total.value = res.data.total
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
-
-const handleCurrentPageChange = (value: number): void => {
-	currentPage.value = value
-	getTableData(value)
-}
-</script>
 
 <style scoped lang='scss'>
 .banner-img {

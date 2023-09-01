@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 import { User } from '@/interface/user'
-import { getUserinfoApi } from '@/api/user'
+import { getUserinfoApi } from '@/api/user/user-api'
 
 const isLogin: boolean = false
 const userinfo: User = {}

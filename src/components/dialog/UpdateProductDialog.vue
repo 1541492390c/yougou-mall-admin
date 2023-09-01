@@ -1,8 +1,3 @@
-<template>
-	<el-dialog v-model='showDialog' title='编辑商品信息' center @close='closeDialog'>
-	</el-dialog>
-</template>
-
 <script setup lang='ts'>
 import { computed } from 'vue'
 
@@ -17,6 +12,11 @@ const closeDialog = (): void => {
 	emits('closeDialog')
 }
 </script>
+
+<template>
+	<el-dialog v-model='showDialog' title='编辑商品信息' center @close='closeDialog'>
+	</el-dialog>
+</template>
 
 <style scoped lang='scss'>
 

@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosR
 import { ResponseCodeEnum } from '@/enums'
 import { ElMessage } from 'element-plus'
 
-export const baseUrl: string = 'http://127.0.0.1:8000'
+export const baseUrl: string = import.meta.env.VITE_APP_BASE_API
 
 const request = (config: AxiosRequestConfig, auth: boolean = false): Promise<AxiosResponse> => {
     const instance: AxiosInstance = axios.create({

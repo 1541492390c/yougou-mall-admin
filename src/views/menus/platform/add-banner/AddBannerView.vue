@@ -1,3 +1,71 @@
+<script setup lang='ts'>
+import { reactive, ref } from 'vue'
+import { Plus } from '@element-plus/icons-vue'
+import { ElMessage, UploadFile, UploadProps, UploadRequestOptions } from 'element-plus'
+import { UploadFileTypeEnum } from '@/enums'
+import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
+import { saveBannerApi } from '@/api/platform/banner-api'
+
+const formData = reactive({
+	type: 1,
+	page: '',
+	link: '',
+	description: '',
+	img: ''
+})
+const bannerTypeList = ref<Array<any>>([
+	{value: 1, label: 'PC端'},
+	{value: 2, label: '移动端'},
+	{value: 3, label: '小程序端'}
+])
+
+// 移除图片
+const handleRemove: UploadProps['onRemove'] = (uploadFile: UploadFile) => {
+	console.log(uploadFile)
+	deleteFileApi(UploadFileTypeEnum.PRODUCT, uploadFile.name).then((res) => {
+		if (res) {
+			formData.img = ''
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+// 上传图片
+const uploadFile = (option: UploadRequestOptions): void => {
+	let fileData: FormData = new FormData()
+	fileData.append('resourceType', UploadFileTypeEnum.PRODUCT.toString())
+	fileData.append('file', option.file)
+	uploadFileApi(fileData).then((res) => {
+		if (res) {
+			formData.img = res.data.substring(res.data.lastIndexOf('/') + 1, res.data.length)
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+// 保存轮播图
+const saveBanner = () => {
+	if (formData.page === '' || formData.img === '' || formData.link === '' || formData.description === '') {
+		ElMessage.error('请输入完整信息')
+		return
+	}
+	saveBannerApi(formData).then((res) => {
+		if (res) {
+			ElMessage.success('添加成功')
+			formData.description = ''
+			formData.img = ''
+			formData.link = ''
+			formData.page = ''
+			formData.type = 1
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+</script>
+
 <template>
 	<div class='card'>
 		<div>
@@ -67,74 +135,6 @@
 		</div>
 	</div>
 </template>
-
-<script setup lang='ts'>
-import { reactive, ref } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
-import { ElMessage, UploadFile, UploadProps, UploadRequestOptions } from 'element-plus'
-import { UploadFileTypeEnum } from '@/enums'
-import { deleteFileApi, uploadFileApi } from '@/api/biz/resource-api'
-import { saveBannerApi } from '@/api/platform/banner-api'
-
-const formData = reactive({
-	type: 1,
-	page: '',
-	link: '',
-	description: '',
-	img: ''
-})
-const bannerTypeList = ref<Array<any>>([
-	{value: 1, label: 'PC端'},
-	{value: 2, label: '移动端'},
-	{value: 3, label: '小程序端'}
-])
-
-// 移除图片
-const handleRemove: UploadProps['onRemove'] = (uploadFile: UploadFile) => {
-	console.log(uploadFile)
-	deleteFileApi(UploadFileTypeEnum.PRODUCT, uploadFile.name).then((res) => {
-		if (res) {
-			formData.img = ''
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
-
-// 上传图片
-const uploadFile = (option: UploadRequestOptions): void => {
-	let fileData: FormData = new FormData()
-	fileData.append('resourceType', UploadFileTypeEnum.PRODUCT.toString())
-	fileData.append('file', option.file)
-	uploadFileApi(fileData).then((res) => {
-		if (res) {
-			formData.img = res.data.substring(res.data.lastIndexOf('/') + 1, res.data.length)
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
-
-// 保存轮播图
-const saveBanner = () => {
-	if (formData.page === '' || formData.img === '' || formData.link === '' || formData.description === '') {
-		ElMessage.error('请输入完整信息')
-		return
-	}
-	saveBannerApi(formData).then((res) => {
-		if (res) {
-			ElMessage.success('添加成功')
-			formData.description = ''
-			formData.img = ''
-			formData.link = ''
-			formData.page = ''
-			formData.type = 1
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
-</script>
 
 <style scoped lang='scss'>
 .form-row {
