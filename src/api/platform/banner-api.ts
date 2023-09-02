@@ -23,4 +23,13 @@ const saveBannerApi = (value: Banner): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getBannerPagesApi, saveBannerApi }
+// 更新轮播图接口
+const updateBannerApi = (value: Banner): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/platform/banner/update',
+        method: 'PUT',
+        data: value
+    }, true)
+}
+
+export { getBannerPagesApi, saveBannerApi, updateBannerApi }

@@ -13,6 +13,7 @@ interface Product {
     brandId?: number,
     state?: number,
     price: number,
+    discount: number | undefined,
     discountPrice: number,
     categoryNode: string,
     name: string,
@@ -28,7 +29,7 @@ interface Category {
     parentId: number,
     level: number,
     name: string,
-    node: string,
+    node?: string,
     children?: Array<Category>
 }
 

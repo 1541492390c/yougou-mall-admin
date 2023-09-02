@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios'
 import request from '@/request'
+import { FeedbackType } from '@/interface/platform'
 
 // 获取反馈类型分页信息接口
 const getFeedbackTypePagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<AxiosResponse> => {
@@ -13,4 +14,13 @@ const getFeedbackTypePagesApi = (pageNum: number = 1, pageSize: number = 10): Pr
     }, true)
 }
 
-export { getFeedbackTypePagesApi }
+// 更新反馈类型接口
+const updateFeedbackTypeApi = (value: FeedbackType): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/platform/feedback_type/update',
+        method: 'PUT',
+        data: value
+    }, true)
+}
+
+export { getFeedbackTypePagesApi, updateFeedbackTypeApi }

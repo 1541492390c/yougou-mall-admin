@@ -8,14 +8,13 @@ const userinfo: User = {}
 export default createStore({
     state: {
         isLogin,
-        userinfo
+        userinfo,
     },
     mutations: {
         SET_IS_LOGIN: (state, {payload}): void => {
             state.isLogin = payload
         },
         SET_USERINFO: (state, {payload}): void => {
-            console.log(payload)
             state.userinfo = payload
         }
     },

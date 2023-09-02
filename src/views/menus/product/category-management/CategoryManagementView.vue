@@ -2,8 +2,10 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { Category } from '@/interface/product'
-import { getCategoryListApi } from '@/api/product/category-api'
+import { deleteCategoryApi, getCategoryListApi, updateCategoryApi } from '@/api/product/category-api'
 import AddCategoryDialog from '@/components/dialog/AddCategoryDialog.vue'
+import { isEmpty } from '@/utils'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const currentCategory = ref<number>(0)
 const currentSecondCategory = ref<number>(0)
@@ -18,27 +20,86 @@ const data = reactive({
 })
 
 onMounted(() => {
-	getCategoryList()
+	getCategoryList(data.parentId, data.level)
 })
 
 // 获取分类列表
-const getCategoryList = () => {
+const getCategoryList = (value: number, level: number) => {
 	getCategoryListApi().then((res) => {
 		if (res) {
 			categoryList.value = res.data
+			// 二级分类
+			if (level === 2) {
+				res.data.forEach((item: Category) => {
+					if (item.categoryId === value && !isEmpty(item.children)) {
+						secondLevelCategoryList.value = item.children
+						thirdLevelCategoryList.value = []
+					}
+				})
+			}
+			// 三级分类
+			if (level === 3 && currentSecondCategory.value !== 0 && !isEmpty(res.data)) {
+				res.data.forEach((item: Category) => {
+					if (item.categoryId === currentCategory.value && !isEmpty(item.children)) {
+						secondLevelCategoryList.value = item.children
+						item.children?.forEach((child: Category) => {
+							if (child.categoryId === value) {
+								thirdLevelCategoryList.value = child.children
+							}
+						})
+					}
+				})
+			}
 		}
 	}).catch((err) => {
 		console.log(err)
 	})
 }
 
+// 更新分类
+const updateCategory = (value: Category) => {
+	updateCategoryApi(value).then((res) => {
+		if (res) {
+			ElMessage.success('修改成功')
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
 
-// const updateCategory = (id: number) => {
-// 	console.log(id)
-// }
+// 删除分类
+const deleteCategory = (value: number, index: number, level: number) => {
+	ElMessageBox.confirm('此操作将删除分类,是否继续?', '删除分类').then(() => {
+		deleteCategoryApi(value).then((res) => {
+			if (res) {
+				ElMessage.success('删除成功')
+				// 删除一级分类
+				if (level === 1) {
+					currentSecondCategory.value = 0
+					currentThirdCategory.value = 0
+					categoryList.value.splice(index, 1)
+					secondLevelCategoryList.value = []
+					thirdLevelCategoryList.value = []
+				}
+				// 删除二级分类
+				if (level === 2) {
+					currentSecondCategory.value = 0
+					secondLevelCategoryList.value?.splice(index, 1)
+					thirdLevelCategoryList.value = []
+				}
+				// 删除三级分类
+				if (level === 3) {
+					thirdLevelCategoryList.value?.splice(index, 1)
+				}
+			}
+		})
+	}).catch(() => {
+		ElMessage.info('操作已取消')
+	})
+}
 
 // 选择分类
-const handleSelect = (value: any, level: number): void => {
+const handleSelect = (value: number, level: number): void => {
 	// 一级分类
 	if (level === 1) {
 		currentCategory.value = value
@@ -69,7 +130,11 @@ const showAddCategoryDialog = (level: number, parentId: number): void => {
 	data.parentId = parentId
 }
 
-const closeAddCategoryDialog = (): void => {
+// 关闭添加分类对话框
+const closeAddCategoryDialog = (isAdd: boolean, parentId: number, level: number): void => {
+	if (isAdd) {
+		getCategoryList(parentId, level)
+	}
 	data.parentId = 0
 	data.level = 1
 	data.showAddCategory = false
@@ -92,20 +157,22 @@ const closeAddCategoryDialog = (): void => {
 												:label='item.categoryId'>
 								<el-input v-model='item.name' size='small' />
 							</el-radio>
-							<div class='delete-button'>
-								<el-button type='info' link>编辑</el-button>
-								<el-button type='danger' link>删除</el-button>
+							<div class='option-button'>
+								<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
+								<el-button @click='deleteCategory(item.categoryId, index, item.level)' type='danger' link>删除</el-button>
 							</div>
 						</div>
 					</div>
 					<!--添加分类按钮-->
-					<el-button v-if='categoryList.length === 0 || categoryList.length <= 9'
-										 @click='showAddCategoryDialog(1, 0)' class='add-category-button'>
-						<el-icon>
-							<plus />
-						</el-icon>
-						<span>添加分类</span>
-					</el-button>
+					<div class='add-button-content'>
+						<el-button v-if='categoryList.length === 0 || categoryList.length < 9'
+											 @click='showAddCategoryDialog(1, 0)' class='add-category-button'>
+							<el-icon>
+								<plus />
+							</el-icon>
+							<span>添加分类</span>
+						</el-button>
+					</div>
 				</el-scrollbar>
 			</div>
 			<!--二级分类-->
@@ -118,19 +185,22 @@ const closeAddCategoryDialog = (): void => {
 												:label='item.categoryId'>
 								<el-input v-model='item.name' size='small' />
 							</el-radio>
-							<div class='delete-button'>
-								<el-button type='danger' text>删除</el-button>
+							<div class='option-button'>
+								<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
+								<el-button @click='deleteCategory(item.categoryId, index, item.level)' type='danger' link>删除</el-button>
 							</div>
 						</div>
 					</div>
 					<!--添加分类按钮-->
-					<el-button v-if='currentCategory !== 0' @click='showAddCategoryDialog(2, currentCategory)'
-										 type='danger' class='add-category-button'>
-						<el-icon>
-							<plus />
-						</el-icon>
-						<span>添加分类</span>
-					</el-button>
+					<div class='add-button-content'>
+						<el-button v-if='currentCategory !== 0' @click='showAddCategoryDialog(2, currentCategory)'
+											 type='danger' class='add-category-button'>
+							<el-icon>
+								<plus />
+							</el-icon>
+							<span>添加分类</span>
+						</el-button>
+					</div>
 				</el-scrollbar>
 			</div>
 			<!--三级分类-->
@@ -142,19 +212,22 @@ const closeAddCategoryDialog = (): void => {
 							<el-radio v-model='currentThirdCategory' :label='item.categoryId'>
 								<el-input v-model='item.name' size='small' />
 							</el-radio>
-							<div class='delete-button'>
-								<el-button type='danger' text>删除</el-button>
+							<div class='option-button'>
+								<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
+								<el-button @click='deleteCategory(item.categoryId, index, item.level)' type='danger' link>删除</el-button>
 							</div>
 						</div>
 					</div>
 					<!--添加分类按钮-->
-					<el-button v-if='currentSecondCategory !== 0' @click='showAddCategoryDialog(3, currentSecondCategory)'
-										 type='danger' class='add-category-button'>
-						<el-icon>
-							<plus />
-						</el-icon>
-						<span>添加分类</span>
-					</el-button>
+					<div class='add-button-content'>
+						<el-button v-if='currentSecondCategory !== 0' @click='showAddCategoryDialog(3, currentSecondCategory)'
+											 type='danger' class='add-category-button'>
+							<el-icon>
+								<plus />
+							</el-icon>
+							<span>添加分类</span>
+						</el-button>
+					</div>
 				</el-scrollbar>
 			</div>
 		</div>
@@ -216,7 +289,7 @@ const closeAddCategoryDialog = (): void => {
 	align-items: center;
 }
 
-.delete-button {
+.option-button {
 	width: 100%;
 	display: flex;
 	justify-content: flex-end;
@@ -226,5 +299,9 @@ const closeAddCategoryDialog = (): void => {
 	width: 100%;
 	color: white;
 	background-color: #f13a3a;
+}
+
+.add-button-content {
+	padding: 10px;
 }
 </style>

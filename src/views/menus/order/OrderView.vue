@@ -2,22 +2,26 @@
 import { computed, onMounted, ref } from 'vue'
 import { Order } from '@/interface/order'
 import { getOrderPagesApi } from '@/api/order/order-api'
+import Pagination from '@/components/pagination/Pagination.vue'
 
-const tableData = ref<Array<Order>>([])
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
+const currentSize = ref<number>(5)
+const tableData = ref<Array<Order>>([])
 
 onMounted(() => {
-	getTableData(1)
+	getTableData()
 })
 
 // 获取表格信息
-const getTableData = (pageNum: number): void => {
-	getOrderPagesApi(pageNum).then((res) => {
+const getTableData = (): void => {
+	getOrderPagesApi(currentPage.value, currentSize.value).then((res) => {
 		if (res) {
 			tableData.value = res.data.list
 			total.value = res.data.total
 		}
+	}).catch((err) => {
+		console.log(err)
 	})
 }
 
@@ -49,9 +53,9 @@ const transformOrderState = computed(() => (value: number): string => {
 	}
 })
 
-const handleCurrentPageChange = (value: number): void => {
+const currentPageChange = (value: number): void => {
 	currentPage.value = value
-	getTableData(value)
+	getTableData()
 }
 </script>
 
@@ -106,15 +110,13 @@ const handleCurrentPageChange = (value: number): void => {
 			</el-table-column>
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
-					<el-button v-if='scope.row.state === 2' type='primary' link class='button'>发货</el-button>
-					<el-button v-if='scope.row.state === 4' type='success' link disabled class='button'>该订单已完成</el-button>
+					<el-button v-if='scope.row.state === 2' type='danger' link >发货</el-button>
+					<el-button v-if='scope.row.state === 4' type='success' link disabled>该订单已完成</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
-		<div class='pagination'>
-			<el-pagination :page-size='10' :current-page='currentPage' :total='total'
-										 small background layout='prev, pager, next' @current-change='handleCurrentPageChange' />
-		</div>
+		<!--分页组件-->
+		<pagination :total='total' :size='currentSize' :current='currentPage' @current-change='currentPageChange' />
 	</div>
 </template>
 
@@ -168,9 +170,5 @@ const handleCurrentPageChange = (value: number): void => {
 	div {
 		margin-top: 5px;
 	}
-}
-
-.button {
-	font-size: 12px;
 }
 </style>

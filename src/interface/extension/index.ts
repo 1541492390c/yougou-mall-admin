@@ -1,7 +1,19 @@
+import { Brand, Product } from '@/interface/product'
+
 // 行政区域选项
 interface District {
     name: string,
     districts: Array<District>
 }
 
-export type { District }
+// 商品展示数据
+interface ProductTable extends Product {
+    options: Array<number>
+}
+
+// 品牌展示数据
+interface BrandTable extends Brand {
+    options: Array<number>
+}
+
+export type { District, ProductTable, BrandTable }
