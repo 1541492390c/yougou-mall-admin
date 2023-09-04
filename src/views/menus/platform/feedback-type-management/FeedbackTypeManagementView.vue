@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
 import { FeedbackType } from '@/interface/platform'
-import { getFeedbackTypePagesApi, updateFeedbackTypeApi } from '@/api/platform/feedback-type-api'
-import { ElMessage } from 'element-plus'
+import { deleteFeedbackTypeApi, getFeedbackTypePagesApi, updateFeedbackTypeApi } from '@/api/platform/feedback-type-api'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { isEmpty } from '@/utils'
 
 const total = ref<number>(0)
@@ -39,6 +39,22 @@ const getTableData = (pageNum: number): void => {
 		console.log(err)
 	})
 }
+
+// 删除反馈类型
+const deleteFeedbackType = (value: number, index: number): void => {
+	ElMessageBox.confirm('此操作将删除反馈类型,是否继续?', '删除反馈类型').then(() => {
+		deleteFeedbackTypeApi(value).then((res) => {
+			if (res) {
+				ElMessage.success('删除成功')
+				tableData.value.splice(index, 1)
+			}
+		}).catch((err) => {
+			console.log(err)
+		})
+	}).catch(() => {
+		ElMessage.info('操作已取消')
+	})
+}
 </script>
 
 <template>
@@ -56,7 +72,7 @@ const getTableData = (pageNum: number): void => {
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
 					<el-button @click='updateFeedbackType(scope.row)' type='info' text class='button'>编辑</el-button>
-					<el-button type='primary' text class='button'>删除</el-button>
+					<el-button @click='deleteFeedbackType(scope.row.feedbackTypeId, scope.$index)' type='primary' text class='button'>删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>

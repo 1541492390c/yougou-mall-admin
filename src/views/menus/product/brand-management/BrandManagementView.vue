@@ -1,11 +1,12 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
 import { Brand, Category } from '@/interface/product'
-import { getBrandPagesApi, updateBrandApi } from '@/api/product/brand-api'
+import { deleteBrandApi, getBrandPagesApi, updateBrandApi } from '@/api/product/brand-api'
 import Pagination from '@/components/pagination/Pagination.vue'
 import { BrandTable } from '@/interface/extension'
 import { getCategoryListApi } from '@/api/product/category-api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import defaultImage from '@/assets/img/default-image.png'
 
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
@@ -68,6 +69,22 @@ const updateBrand = (item: BrandTable): void => {
 		console.log(err)
 	})
 }
+
+// 删除品牌
+const deleteBrand = (value: number, index: number): void => {
+	ElMessageBox.confirm('此操作将删除品牌,是否继续?', '删除品牌').then(() => {
+		deleteBrandApi(value).then((res) => {
+			if (res) {
+				ElMessage.success('删除成功')
+				tableData.value.splice(index, 1)
+			}
+		}).catch((err) => {
+			console.log(err)
+		})
+	}).catch(() => {
+		ElMessage.info('操作已取消')
+	})
+}
 </script>
 
 <template>
@@ -79,7 +96,7 @@ const updateBrand = (item: BrandTable): void => {
 			<!--图片-->
 			<el-table-column label='图片' align='center'>
 				<template #default='scope'>
-					<img :src='scope.row.img' alt='' class='brand-img'>
+					<img :src='scope.row.img ? scope.row.img : defaultImage' alt='' class='brand-img'>
 				</template>
 			</el-table-column>
 			<!--分类-->
@@ -106,7 +123,7 @@ const updateBrand = (item: BrandTable): void => {
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
 					<el-button @click='updateBrand(scope.row)' type='info' link>编辑</el-button>
-					<el-button type='danger' link>删除</el-button>
+					<el-button @click='deleteBrand(scope.row.brandId, scope.$index)' type='danger' link>删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>

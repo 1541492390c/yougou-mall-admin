@@ -1,16 +1,16 @@
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue'
 import { Banner } from '@/interface/platform'
-import { getBannerPagesApi, updateBannerApi } from '@/api/platform/banner-api'
-import { ElMessage } from 'element-plus'
+import { deleteBannerApi, getBannerPagesApi, updateBannerApi } from '@/api/platform/banner-api'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const tableData = ref<Array<Banner>>([])
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const typeOptions = ref<Array<any>>([
-	{ value: 1, label: 'PC端' },
-	{ value: 2, label: '移动端' },
-	{ value: 3, label: '小程序端' }
+	{value: 1, label: 'PC端'},
+	{value: 2, label: '移动端'},
+	{value: 3, label: '小程序端'}
 ])
 
 onMounted(() => {
@@ -42,6 +42,22 @@ const updateBanner = (value: Banner): void => {
 		}
 	}).catch((err) => {
 		console.log(err)
+	})
+}
+
+// 删除轮播图
+const deleteBanner = (value: number, index: number): void => {
+	ElMessageBox.confirm('此操作将删除轮播图,是否继续?', '删除轮播图').then(() => {
+		deleteBannerApi(value).then((res) => {
+			if (res) {
+				ElMessage.success('删除成功')
+				tableData.value.splice(index, 1)
+			}
+		}).catch((err) => {
+			console.log(err)
+		}).catch(() => {
+			ElMessage.info('操作已取消')
+		})
 	})
 }
 </script>
@@ -87,8 +103,8 @@ const updateBanner = (value: Banner): void => {
 			<!--操作-->
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
-					<el-button @click='updateBanner(scope.row)' type='info' text class='button'>编辑</el-button>
-					<el-button type='primary' text class='button'>删除</el-button>
+					<el-button @click='updateBanner(scope.row)' type='info' link class='button'>编辑</el-button>
+					<el-button @click='deleteBanner(scope.row.bannerId, scope.$index)' type='primary' link class='button'>删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>

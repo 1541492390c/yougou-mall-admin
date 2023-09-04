@@ -23,4 +23,15 @@ const updateFeedbackTypeApi = (value: FeedbackType): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getFeedbackTypePagesApi, updateFeedbackTypeApi }
+// 删除反馈类型接口
+const deleteFeedbackTypeApi = (value: number): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/platform/feedback_type/delete',
+        method: 'DELETE',
+        params: {feedback_type_id: value}
+    }, true)
+}
+
+export { getFeedbackTypePagesApi, updateFeedbackTypeApi, deleteFeedbackTypeApi
+
+}

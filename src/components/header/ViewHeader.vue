@@ -2,7 +2,7 @@
 import { defineComponent, defineProps, reactive } from 'vue'
 import { User } from '@/interface/user'
 import { Edit, SwitchButton } from '@element-plus/icons-vue'
-import UpdatePasswordDialog from '@/components/dialog/UpdatePasswordDialog.vue'
+import UpdatePasswordDialog from '@/components/dialog/update/UpdatePasswordDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { logoutApi } from '@/api/auth/auth-api'
 import { useRouter } from 'vue-router'

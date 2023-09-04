@@ -11,7 +11,7 @@ const uploadFileApi = (value: FormData): Promise<AxiosResponse> => {
     }, true)
 }
 
-// 删除图片
+// 删除文件
 const deleteFileApi = (resourceType: number, fileName: string): Promise<AxiosResponse> => {
     return request({
         url: '/extra/resource/delete',

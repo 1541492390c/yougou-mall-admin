@@ -9,7 +9,7 @@ interface Brand {
 
 // 商品
 interface Product {
-    productId?: string,
+    productId?: number,
     brandId?: number,
     state?: number,
     price: number,

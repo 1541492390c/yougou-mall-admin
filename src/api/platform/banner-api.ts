@@ -32,4 +32,13 @@ const updateBannerApi = (value: Banner): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getBannerPagesApi, saveBannerApi, updateBannerApi }
+// 删除轮播图接口
+const deleteBannerApi = (value: number): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/platform/banner/delete',
+        method: 'DELETE',
+        params: {banner_id: value}
+    }, true)
+}
+
+export { getBannerPagesApi, saveBannerApi, updateBannerApi, deleteBannerApi }

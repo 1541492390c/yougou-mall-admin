@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
 
-const props = defineProps<{show: boolean, productId: string}>()
-const emits = defineEmits<{ (e: 'closeDialog'): void}>()
+const props = defineProps<{ show: boolean, productId: number }>()
+const emits = defineEmits<{ (e: 'closeDialog'): void }>()
 
 const showDialog = computed(() => {
 	return props.show
@@ -14,7 +14,7 @@ const closeDialog = (): void => {
 </script>
 
 <template>
-	<el-dialog v-model='showDialog' title='编辑商品信息' center @close='closeDialog'>
+	<el-dialog v-model='showDialog' title='商品详细信息' center @close='closeDialog'>
 	</el-dialog>
 </template>
 

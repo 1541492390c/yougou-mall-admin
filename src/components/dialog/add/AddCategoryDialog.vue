@@ -5,9 +5,7 @@ import { saveCategoryApi } from '@/api/product/category-api'
 import { Category } from '@/interface/product'
 
 const props = defineProps<{ show: boolean, level: number, parentId: number }>()
-const emits = defineEmits<{
-	(e: 'closeAddCategoryDialog', isAdd: boolean, parentId: number, level: number): void
-}>()
+const emits = defineEmits<{ (e: 'closeAddCategoryDialog', isAdd: boolean, parentId: number, level: number): void }>()
 const formRef = ref<FormInstance>()
 const formData = reactive({
 	name: ''

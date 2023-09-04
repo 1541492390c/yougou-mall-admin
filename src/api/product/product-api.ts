@@ -26,4 +26,13 @@ const updateProductApi = (value: Product): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getProductPagesApi, updateProductApi }
+// 删除商品信息接口
+const deleteProductApi = (value: number): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/product/delete',
+        method: 'DELETE',
+        params: {product_id: value}
+    }, true)
+}
+
+export { getProductPagesApi, updateProductApi, deleteProductApi }

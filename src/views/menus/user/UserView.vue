@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { getUserPagesApi } from '@/api/user/user-api'
 import { User } from '@/interface/user'
 import Pagination from '@/components/pagination/Pagination.vue'
+import defaultAvatar from '@/assets/img/default-avatar.png'
 
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
@@ -58,7 +59,7 @@ const currentPageChange = (value: number): void => {
 			</template>
 			<el-table-column label='头像' align='center'>
 				<template #default='scope'>
-					<el-avatar :src='scope.row.avatar' :size='60' alt='' class='product-img' />
+					<el-avatar :src='scope.row.avatar ? scope.row.avatar : defaultAvatar' :size='60' alt='' class='product-img' />
 				</template>
 			</el-table-column>
 			<el-table-column label='昵称' prop='nickname' align='center' />

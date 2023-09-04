@@ -3,7 +3,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { Category } from '@/interface/product'
 import { deleteCategoryApi, getCategoryListApi, updateCategoryApi } from '@/api/product/category-api'
-import AddCategoryDialog from '@/components/dialog/AddCategoryDialog.vue'
+import AddCategoryDialog from '@/components/dialog/add/AddCategoryDialog.vue'
 import { isEmpty } from '@/utils'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
