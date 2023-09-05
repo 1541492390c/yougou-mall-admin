@@ -409,26 +409,6 @@ const addProduct = (): void => {
 	width: 100%;
 }
 
-.header {
-	font-size: 16px;
-	margin: 10px 10px 20px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-}
-
-.form-row {
-	padding: 40px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-}
-
-.form-title {
-	width: 80px;
-	font-size: 14px;
-}
-
 .attr-title {
 	width: 120px;
 	font-size: 14px;

@@ -45,8 +45,8 @@ const uploadFile = (option: UploadRequestOptions): void => {
 	})
 }
 
-// 保存轮播图
-const saveBanner = () => {
+// 添加轮播图
+const addBanner = () => {
 	if (formData.page === '' || formData.img === '' || formData.link === '' || formData.description === '') {
 		ElMessage.error('请输入完整信息')
 		return
@@ -68,7 +68,7 @@ const saveBanner = () => {
 
 <template>
 	<div class='card'>
-		<div>
+		<div class='header'>
 			<span>添加轮播图</span>
 		</div>
 		<div class='main'>
@@ -76,7 +76,7 @@ const saveBanner = () => {
 				<el-col :span='12'>
 					<div class='form-row'>
 						<span class='form-title'>轮播图类型</span>
-						<el-select v-model='formData.type'>
+						<el-select v-model='formData.type' style='width: 100%'>
 							<el-option v-for='(item, index) in bannerTypeList'
 												 :key='index'
 												 :label='item.label'
@@ -128,8 +128,8 @@ const saveBanner = () => {
 				</el-col>
 			</el-row>
 			<el-row>
-				<div class='flex'>
-					<el-button @click='saveBanner' type='primary'>确认添加</el-button>
+				<div class='add-button'>
+					<el-button @click='addBanner' type='primary'>确认添加</el-button>
 				</div>
 			</el-row>
 		</div>
@@ -149,7 +149,9 @@ const saveBanner = () => {
 	font-size: 14px;
 }
 
-.flex {
+.add-button {
+	margin-top: 20px;
+	margin-bottom: 20px;
 	width: 100%;
 	display: flex;
 	justify-content: center;

@@ -178,55 +178,63 @@ const closeAddCategoryDialog = (isAdd: boolean, parentId: number, level: number)
 			<!--二级分类-->
 			<div class='category-card'>
 				<el-scrollbar class='category-card-item' height='550'>
+					<!--缺省-->
+					<el-empty v-if='categoryList.length === 0' description='暂无数据' />
 					<!--二级分类列表-->
-					<div v-for='(item, index) in secondLevelCategoryList' :key='index' class='category-item'>
-						<div class='category-item-content'>
-							<el-radio v-model='currentSecondCategory' @change='(value) => handleSelect(value, item.level)'
-												:label='item.categoryId'>
-								<el-input v-model='item.name' size='small' />
-							</el-radio>
-							<div class='option-button'>
-								<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
-								<el-button @click='deleteCategory(item.categoryId, index, item.level)' type='danger' link>删除</el-button>
+					<div v-else>
+						<div v-for='(item, index) in secondLevelCategoryList' :key='index' class='category-item'>
+							<div class='category-item-content'>
+								<el-radio v-model='currentSecondCategory' @change='(value) => handleSelect(value, item.level)'
+													:label='item.categoryId'>
+									<el-input v-model='item.name' size='small' />
+								</el-radio>
+								<div class='option-button'>
+									<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
+									<el-button @click='deleteCategory(item.categoryId, index, item.level)' type='danger' link>删除</el-button>
+								</div>
 							</div>
 						</div>
-					</div>
-					<!--添加分类按钮-->
-					<div class='add-button-content'>
-						<el-button v-if='currentCategory !== 0' @click='showAddCategoryDialog(2, currentCategory)'
-											 type='danger' class='add-category-button'>
-							<el-icon>
-								<plus />
-							</el-icon>
-							<span>添加分类</span>
-						</el-button>
+						<!--添加分类按钮-->
+						<div class='add-button-content'>
+							<el-button v-if='currentCategory !== 0' @click='showAddCategoryDialog(2, currentCategory)'
+												 type='danger' class='add-category-button'>
+								<el-icon>
+									<plus />
+								</el-icon>
+								<span>添加分类</span>
+							</el-button>
+						</div>
 					</div>
 				</el-scrollbar>
 			</div>
 			<!--三级分类-->
 			<div class='category-card'>
 				<el-scrollbar class='category-card-item' height='550'>
+					<!--缺省-->
+					<el-empty v-if='categoryList.length === 0' description='暂无数据' />
 					<!--三级分类列表-->
-					<div v-for='(item, index) in thirdLevelCategoryList' :key='index' class='category-item'>
-						<div class='category-item-content'>
-							<el-radio v-model='currentThirdCategory' :label='item.categoryId'>
-								<el-input v-model='item.name' size='small' />
-							</el-radio>
-							<div class='option-button'>
-								<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
-								<el-button @click='deleteCategory(item.categoryId, index, item.level)' type='danger' link>删除</el-button>
+					<div v-else>
+						<div v-for='(item, index) in thirdLevelCategoryList' :key='index' class='category-item'>
+							<div class='category-item-content'>
+								<el-radio v-model='currentThirdCategory' :label='item.categoryId'>
+									<el-input v-model='item.name' size='small' />
+								</el-radio>
+								<div class='option-button'>
+									<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
+									<el-button @click='deleteCategory(item.categoryId, index, item.level)' type='danger' link>删除</el-button>
+								</div>
 							</div>
 						</div>
-					</div>
-					<!--添加分类按钮-->
-					<div class='add-button-content'>
-						<el-button v-if='currentSecondCategory !== 0' @click='showAddCategoryDialog(3, currentSecondCategory)'
-											 type='danger' class='add-category-button'>
-							<el-icon>
-								<plus />
-							</el-icon>
-							<span>添加分类</span>
-						</el-button>
+						<!--添加分类按钮-->
+						<div class='add-button-content'>
+							<el-button v-if='currentSecondCategory !== 0' @click='showAddCategoryDialog(3, currentSecondCategory)'
+												 type='danger' class='add-category-button'>
+								<el-icon>
+									<plus />
+								</el-icon>
+								<span>添加分类</span>
+							</el-button>
+						</div>
 					</div>
 				</el-scrollbar>
 			</div>

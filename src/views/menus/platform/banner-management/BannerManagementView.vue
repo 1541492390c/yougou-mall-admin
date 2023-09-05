@@ -4,9 +4,10 @@ import { Banner } from '@/interface/platform'
 import { deleteBannerApi, getBannerPagesApi, updateBannerApi } from '@/api/platform/banner-api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-const tableData = ref<Array<Banner>>([])
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
+const currentSize = ref<number>(10)
+const tableData = ref<Array<Banner>>([])
 const typeOptions = ref<Array<any>>([
 	{value: 1, label: 'PC端'},
 	{value: 2, label: '移动端'},
@@ -14,12 +15,12 @@ const typeOptions = ref<Array<any>>([
 ])
 
 onMounted(() => {
-	getTableData(currentPage.value)
+	getTableData()
 })
 
 // 获取轮播图分页信息
-const getTableData = (pageNum: number): void => {
-	getBannerPagesApi(pageNum).then((res) => {
+const getTableData = (): void => {
+	getBannerPagesApi(currentPage.value, currentSize.value).then((res) => {
 		if (res) {
 			tableData.value = res.data.list
 			total.value = res.data.total
@@ -31,7 +32,7 @@ const getTableData = (pageNum: number): void => {
 
 const currentPageChange = (value: number): void => {
 	currentPage.value = value
-	getTableData(value)
+	getTableData()
 }
 
 // 更新轮播图
@@ -104,12 +105,15 @@ const deleteBanner = (value: number, index: number): void => {
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
 					<el-button @click='updateBanner(scope.row)' type='info' link class='button'>编辑</el-button>
-					<el-button @click='deleteBanner(scope.row.bannerId, scope.$index)' type='primary' link class='button'>删除</el-button>
+					<el-button @click='deleteBanner(scope.row.bannerId, scope.$index)' type='primary' link class='button'>删除
+					</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
+		<!--分页组件-->
 		<div class='pagination'>
-			<el-pagination :total='total' :page-size='5' :current-page='currentPage' @current-change='currentPageChange'
+			<el-pagination :total='total' :page-size='currentSize' :current-page='currentPage'
+										 @current-change='currentPageChange'
 										 small layout='prev, pager, next' background />
 		</div>
 	</div>

@@ -51,6 +51,7 @@ const getCategoryList = (): void => {
 	})
 }
 
+// 选择分类
 const handleSelect = (value: Array<number>, item: BrandTable): void => {
 	item.options = value
 	item.categoryNode = value.join('-')
@@ -105,8 +106,8 @@ const deleteCoupon = (value: number, index: number): void => {
 					<el-input-number v-model='scope.row.expired' :min='1' :max='10' placeholder='请输入过期天数' />
 				</template>
 			</el-table-column>
-			<!--分类节点-->
-			<el-table-column label='分类节点' align='center'>
+			<!--分类-->
+			<el-table-column label='分类' align='center'>
 				<template #default='scope'>
 					<el-cascader :model-value='scope.row.options' :options='categoryList'
 											 @change='(value: Array<number>) => handleSelect(value, scope.row)'
