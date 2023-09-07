@@ -81,9 +81,7 @@ const deleteFeedbackType = (value: number, index: number): void => {
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
 					<el-button @click='updateFeedbackType(scope.row)' type='info' text class='button'>编辑</el-button>
-					<el-button @click='deleteFeedbackType(scope.row.feedbackTypeId, scope.$index)' type='primary' text
-										 class='button'>删除
-					</el-button>
+					<el-button @click='deleteFeedbackType(scope.row.feedbackTypeId, scope.$index)' type='primary' text class='button'>删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>

@@ -23,7 +23,7 @@ const attrItem = ref<any>([
 		inputValue: ''
 	}
 ])
-const formData = reactive<any>({
+const formData = reactive<Record<string, any>>({
 	name: '',
 	price: 0,
 	discount: null,
@@ -259,69 +259,78 @@ const addProduct = (): void => {
 			<span>添加商品</span>
 		</div>
 		<div class='main'>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>商品分类</span>
-						<el-cascader :options='categoryList' :props="{label: 'name', value: 'categoryId'}" placeholder='请选择分类'
-												 @change='handleSelectCategory' style='width: 100%' />
-					</div>
-				</el-col>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>所属品牌</span>
-						<el-input v-model='formData.name' placeholder='请输入商品名称' size='small' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>商品名称</span>
-						<el-input placeholder='请输入商品名称' size='small' />
-					</div>
-				</el-col>
-				<el-col v-if='formData.isDiscount' :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>商品折扣</span>
-						<el-input-number v-model='formData.discount' placeholder='请输入商品折扣' :min='1' :max='9'
-														 size='small' style='width: 100%' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>商品图片</span>
-						<el-upload
-										action='#'
-										list-type='picture-card'
-										v-model:file-list='fileList'
-										:limit='8'
-										:http-request='uploadFile'
-										:on-remove='handleRemove'
-						>
-							<el-icon>
-								<Plus />
-							</el-icon>
-						</el-upload>
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>是否推荐</span>
-						<el-switch v-model='formData.recommended' />
-					</div>
-				</el-col>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>是否折扣</span>
-						<el-switch v-model='formData.isDiscount' @change='discountChange' />
-					</div>
-				</el-col>
-			</el-row>
+			<el-form :model='formData'>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='商品分类' prop='category' required style='width: 100%'>
+								<el-cascader :options='categoryList' :props="{label: 'name', value: 'categoryId'}" placeholder='请选择分类'
+														 @change='handleSelectCategory' style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='所属品牌(选填)' prop='brandId' style='width: 100%'>
+								<el-select placeholder='请选择品牌' style='width: 100%'></el-select>
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='商品名称' prop='name' required style='width: 100%'>
+								<el-input placeholder='请输入商品名称' size='small' />
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col v-if='formData.isDiscount' :span='12'>
+						<div class='form-row'>
+							<el-form-item label='商品折扣' prop='discount' style='width: 100%'>
+								<el-input-number v-model='formData.discount' placeholder='请输入商品折扣' :min='1' :max='9'
+																 size='small' style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='商品图片'>
+								<el-upload
+												action='#'
+												list-type='picture-card'
+												v-model:file-list='fileList'
+												:limit='8'
+												:http-request='uploadFile'
+												:on-remove='handleRemove'
+								>
+									<el-icon>
+										<Plus />
+									</el-icon>
+								</el-upload>
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='是否推荐' prop='recommended' style='width: 100%'>
+								<el-switch v-model='formData.recommended' />
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='是否折扣' prop='isDiscount' style='width: 100%'>
+								<el-switch v-model='formData.isDiscount' @change='discountChange' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+			</el-form>
 
 			<div style='padding:35px'>
 				<div class='sku-spec'>

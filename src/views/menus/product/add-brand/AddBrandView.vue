@@ -5,7 +5,7 @@ import { getCategoryListApi } from '@/api/product/category-api'
 import { Plus } from '@element-plus/icons-vue'
 
 const categoryList = ref<Array<Category>>([])
-const formData = reactive({
+const formData = reactive<Record<string, any>>({
 	categoryNode: '',
 	name: '',
 	description: ''
@@ -42,49 +42,56 @@ const handleSelectCategory = (value: Array<number>): void => {
 			<span>添加品牌</span>
 		</div>
 		<div class='main'>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>品牌分类</span>
-						<el-cascader :options='categoryList' :props="{label: 'name', value: 'categoryId'}" placeholder='请选择分类'
-												 @change='handleSelectCategory' style='width: 100%' />
+			<el-form :model='formData' label-width='120'>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='品牌分类' prop='category' required style='width: 100%'>
+								<el-cascader :options='categoryList' :props="{label: 'name', value: 'categoryId'}"
+														 placeholder='请选择分类'
+														 @change='handleSelectCategory' style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='品牌名称' prop='name' required style='width: 100%'>
+								<el-input v-model='formData.name' placeholder='请输入品牌名称' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='品牌简介' prop='description' required style='width: 100%'>
+								<el-input v-model='formData.description' type='textarea' placeholder='请输入品牌简介' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='品牌logo' prop='img' style='width: 100%'>
+								<el-upload
+												action='#'
+												list-type='picture-card'
+								>
+									<el-icon>
+										<Plus />
+									</el-icon>
+								</el-upload>
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<div class='add-button'>
+						<el-button type='primary'>确认添加</el-button>
 					</div>
-				</el-col>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>品牌名称</span>
-						<el-input v-model='formData.name' placeholder='请输入品牌名称' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>品牌简介</span>
-						<el-input v-model='formData.description' type='textarea' placeholder='请输入品牌简介' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>品牌logo</span>
-						<el-upload
-										action='#'
-										list-type='picture-card'
-						>
-							<el-icon>
-								<Plus />
-							</el-icon>
-						</el-upload>
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<div class='add-button'>
-					<el-button type='primary'>确认添加</el-button>
-				</div>
-			</el-row>
+				</el-row>
+			</el-form>
 		</div>
 	</div>
 </template>

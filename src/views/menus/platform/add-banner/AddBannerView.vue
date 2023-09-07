@@ -5,8 +5,9 @@ import { ElMessage, UploadFile, UploadProps, UploadRequestOptions } from 'elemen
 import { UploadFileTypeEnum } from '@/enums'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
 import { saveBannerApi } from '@/api/platform/banner-api'
+import { Banner } from '@/interface/platform'
 
-const formData = reactive({
+const formData = reactive<Record<string, any>>({
 	type: 1,
 	page: '',
 	link: '',
@@ -51,7 +52,7 @@ const addBanner = () => {
 		ElMessage.error('请输入完整信息')
 		return
 	}
-	saveBannerApi(formData).then((res) => {
+	saveBannerApi(formData as Banner).then((res) => {
 		if (res) {
 			ElMessage.success('添加成功')
 			formData.description = ''
@@ -72,66 +73,131 @@ const addBanner = () => {
 			<span>添加轮播图</span>
 		</div>
 		<div class='main'>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>轮播图类型</span>
-						<el-select v-model='formData.type' style='width: 100%'>
-							<el-option v-for='(item, index) in bannerTypeList'
-												 :key='index'
-												 :label='item.label'
-												 :value='item.value'
-												 placeholder='请选择轮播图类型' />
-						</el-select>
+			<el-form :model='formData' label-width='120'>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='轮播图类型' prop='type' required style='width: 100%'>
+								<el-select v-model='formData.type' style='width: 100%'>
+									<el-option v-for='(item, index) in bannerTypeList'
+														 :key='index'
+														 :label='item.label'
+														 :value='item.value'
+														 placeholder='请选择轮播图类型' />
+								</el-select>
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='所属页面' prop='page' required style='width: 100%'>
+								<el-input v-model='formData.link' placeholder='请输入轮播图所属页面' size='small' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='轮播图链接(选填)' prop='link' style='width: 100%'>
+								<el-input v-model='formData.link' placeholder='请输入轮播图链接' size='small' />
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='简介(选填)' prop='link' style='width: 100%'>
+								<el-input v-model='formData.description' placeholder='请输入轮播图链接' size='small' type='textarea' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='12'>
+						<div class='form-row'>
+							<el-form-item label='轮播图' prop='img' required style='width: 100%'>
+								<el-upload
+												action='#'
+												list-type='picture-card'
+												:limit='1'
+												:http-request='uploadFile'
+												:on-remove='handleRemove'
+												class='upload'
+								>
+									<el-icon>
+										<Plus />
+									</el-icon>
+								</el-upload>
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<div class='add-button'>
+						<el-button @click='addBanner' type='primary'>确认添加</el-button>
 					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>轮播图链接</span>
-						<el-input v-model='formData.link' placeholder='请输入轮播图链接' size='small' />
-					</div>
-				</el-col>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>所属页面</span>
-						<el-input v-model='formData.page' placeholder='请输入轮播图所属页面' size='small' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>简介</span>
-						<el-input v-model='formData.description' placeholder='请输入轮播图链接' size='small' type='textarea' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>轮播图</span>
-						<el-upload
-										action='#'
-										list-type='picture-card'
-										:limit='1'
-										:http-request='uploadFile'
-										:on-remove='handleRemove'
-										class='upload'
-						>
-							<el-icon>
-								<Plus />
-							</el-icon>
-						</el-upload>
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<div class='add-button'>
-					<el-button @click='addBanner' type='primary'>确认添加</el-button>
-				</div>
-			</el-row>
+				</el-row>
+			</el-form>
+<!--			<el-row>-->
+<!--				<el-col :span='12'>-->
+<!--					<div class='form-row'>-->
+<!--						<span class='form-title'>轮播图类型</span>-->
+<!--						<el-select v-model='formData.type' style='width: 100%'>-->
+<!--							<el-option v-for='(item, index) in bannerTypeList'-->
+<!--												 :key='index'-->
+<!--												 :label='item.label'-->
+<!--												 :value='item.value'-->
+<!--												 placeholder='请选择轮播图类型' />-->
+<!--						</el-select>-->
+<!--					</div>-->
+<!--				</el-col>-->
+<!--			</el-row>-->
+<!--			<el-row>-->
+<!--				<el-col :span='12'>-->
+<!--					<div class='form-row'>-->
+<!--						<span class='form-title'>轮播图链接</span>-->
+<!--						<el-input v-model='formData.link' placeholder='请输入轮播图链接' size='small' />-->
+<!--					</div>-->
+<!--				</el-col>-->
+<!--				<el-col :span='12'>-->
+<!--					<div class='form-row'>-->
+<!--						<span class='form-title'>所属页面</span>-->
+<!--						<el-input v-model='formData.page' placeholder='请输入轮播图所属页面' size='small' />-->
+<!--					</div>-->
+<!--				</el-col>-->
+<!--			</el-row>-->
+<!--			<el-row>-->
+<!--				<el-col :span='12'>-->
+<!--					<div class='form-row'>-->
+<!--						<span class='form-title'>简介</span>-->
+<!--						<el-input v-model='formData.description' placeholder='请输入轮播图链接' size='small' type='textarea' />-->
+<!--					</div>-->
+<!--				</el-col>-->
+<!--			</el-row>-->
+<!--			<el-row>-->
+<!--				<el-col :span='12'>-->
+<!--					<div class='form-row'>-->
+<!--						<span class='form-title'>轮播图</span>-->
+<!--						<el-upload-->
+<!--										action='#'-->
+<!--										list-type='picture-card'-->
+<!--										:limit='1'-->
+<!--										:http-request='uploadFile'-->
+<!--										:on-remove='handleRemove'-->
+<!--										class='upload'-->
+<!--						>-->
+<!--							<el-icon>-->
+<!--								<Plus />-->
+<!--							</el-icon>-->
+<!--						</el-upload>-->
+<!--					</div>-->
+<!--				</el-col>-->
+<!--			</el-row>-->
+<!--			<el-row>-->
+<!--				<div class='add-button'>-->
+<!--					<el-button @click='addBanner' type='primary'>确认添加</el-button>-->
+<!--				</div>-->
+<!--			</el-row>-->
 		</div>
 	</div>
 </template>
