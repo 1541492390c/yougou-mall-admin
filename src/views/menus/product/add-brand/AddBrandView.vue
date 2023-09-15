@@ -1,30 +1,14 @@
 <script setup lang='ts'>
-import { onMounted, reactive, ref } from 'vue'
-import { Category } from '@/interface/product'
-import { getCategoryListApi } from '@/api/product/category-api'
+import { reactive } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
+import { useStore } from 'vuex'
 
-const categoryList = ref<Array<Category>>([])
+const store = useStore()
 const formData = reactive<Record<string, any>>({
 	categoryNode: '',
 	name: '',
 	description: ''
 })
-
-onMounted(() => {
-	getCategoryList()
-})
-
-// 获取分类列表
-const getCategoryList = (): void => {
-	getCategoryListApi().then((res) => {
-		if (res) {
-			categoryList.value = res.data
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
 
 // 选择分类
 const handleSelectCategory = (value: Array<number>): void => {
@@ -44,16 +28,16 @@ const handleSelectCategory = (value: Array<number>): void => {
 		<div class='main'>
 			<el-form :model='formData' label-width='120'>
 				<el-row>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
-							<el-form-item label='品牌分类' prop='category' required style='width: 100%'>
-								<el-cascader :options='categoryList' :props="{label: 'name', value: 'categoryId'}"
+							<el-form-item label='品牌分类' prop='categoryNode' required style='width: 100%'>
+								<el-cascader :options='store.getters.categoryList' :props="{label: 'name', value: 'categoryId'}"
 														 placeholder='请选择分类'
 														 @change='handleSelectCategory' style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='品牌名称' prop='name' required style='width: 100%'>
 								<el-input v-model='formData.name' placeholder='请输入品牌名称' />
@@ -62,7 +46,7 @@ const handleSelectCategory = (value: Array<number>): void => {
 					</el-col>
 				</el-row>
 				<el-row>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='品牌简介' prop='description' required style='width: 100%'>
 								<el-input v-model='formData.description' type='textarea' placeholder='请输入品牌简介' />
@@ -71,7 +55,7 @@ const handleSelectCategory = (value: Array<number>): void => {
 					</el-col>
 				</el-row>
 				<el-row>
-					<el-col :span='12'>
+					<el-col :span='14'>
 						<div class='form-row'>
 							<el-form-item label='品牌logo' prop='img' style='width: 100%'>
 								<el-upload

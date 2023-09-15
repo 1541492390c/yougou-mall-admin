@@ -1,22 +1,26 @@
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue'
-import { Brand, Category } from '@/interface/product'
+import { onMounted, reactive, ref } from 'vue'
+import { Brand } from '@/interface/product'
 import { deleteBrandApi, getBrandPagesApi, updateBrandApi } from '@/api/product/brand-api'
 import Pagination from '@/components/pagination/Pagination.vue'
 import { BrandTable } from '@/interface/extension'
-import { getCategoryListApi } from '@/api/product/category-api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import defaultImage from '@/assets/img/default-image.png'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(10)
 const tableData = ref<Array<BrandTable>>([])
-const categoryList = ref<Array<Category>>([])
+const searchData = reactive<Record<string, any>>({
+	categoryNode: '',
+	name: '',
+	searchOptions: []
+})
 
 onMounted(() => {
 	getTableData()
-	getCategoryList()
 })
 
 const getTableData = (): void => {
@@ -35,14 +39,6 @@ const getTableData = (): void => {
 				tableData.value.push(data)
 			})
 		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
-
-const getCategoryList = (): void => {
-	getCategoryListApi().then((res) => {
-		categoryList.value = res.data
 	}).catch((err) => {
 		console.log(err)
 	})
@@ -89,6 +85,23 @@ const deleteBrand = (value: number, index: number): void => {
 
 <template>
 	<div class='card'>
+		<!--搜索栏-->
+		<el-form :model='searchData' inline class='search-form'>
+			<!--分类-->
+			<el-form-item label='分类:'>
+				<el-cascader :model-value='searchData.searchOptions' :options='store.state.categoryList'
+										 :props="{value: 'categoryId', label: 'name'}" placeholder='请选择分类' style='width: 300px' />
+			</el-form-item>
+			<!--名称-->
+			<el-form-item label='名称:'>
+				<el-input v-model='searchData.name' placeholder='请输入名称' />
+			</el-form-item>
+			<el-form-item>
+				<el-button>重置</el-button>
+				<el-button type='primary'>重置</el-button>
+			</el-form-item>
+		</el-form>
+		<!--表格数据-->
 		<el-table :data='tableData'>
 			<template #empty>
 				<el-empty description='暂无数据' />
@@ -102,7 +115,7 @@ const deleteBrand = (value: number, index: number): void => {
 			<!--分类-->
 			<el-table-column label='分类' align='center' prop='categoryNode'>
 				<template #default='scope'>
-					<el-cascader :model-value='scope.row.options' :options='categoryList'
+					<el-cascader :model-value='scope.row.options' :options='store.state.categoryList'
 											 @change='(value: Array<number>) => handleSelect(value, scope.row)'
 											 :props="{value: 'categoryId', label: 'name'}" placeholder='请选择' />
 				</template>

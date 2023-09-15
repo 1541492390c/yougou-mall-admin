@@ -1,18 +1,22 @@
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { Banner } from '@/interface/platform'
 import { deleteBannerApi, getBannerPagesApi, updateBannerApi } from '@/api/platform/banner-api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
-const currentSize = ref<number>(10)
-const tableData = ref<Array<Banner>>([])
+const currentSize = ref<number>(5)
 const typeOptions = ref<Array<any>>([
 	{value: 1, label: 'PC端'},
 	{value: 2, label: '移动端'},
 	{value: 3, label: '小程序端'}
 ])
+const tableData = ref<Array<Banner>>([])
+const searchData = reactive<Record<string, any>>({
+	type: 1,
+	page: ''
+})
 
 onMounted(() => {
 	getTableData()
@@ -65,6 +69,24 @@ const deleteBanner = (value: number, index: number): void => {
 
 <template>
 	<div class='card'>
+		<!--搜索栏-->
+		<el-form :model='searchData' inline class='search-form'>
+			<!--所属页面-->
+			<el-form-item label='所属页面:' prop='page'>
+				<el-input v-model='searchData.page' placeholder='请输入所属页面' />
+			</el-form-item>
+			<!--所属终端-->
+			<el-form-item label='所属终端:' prop='page'>
+				<el-select v-model='searchData.type' placeholder='请选择所属终端'>
+					<el-option v-for='(item, index) in typeOptions' :value='item.value' :label='item.label' :key='index' />
+				</el-select>
+			</el-form-item>
+			<el-form-item>
+				<el-button>重置</el-button>
+				<el-button type='primary'>重置</el-button>
+			</el-form-item>
+		</el-form>
+		<!--表格数据-->
 		<el-table :data='tableData'>
 			<template #empty>
 				<el-empty description='暂无数据' />

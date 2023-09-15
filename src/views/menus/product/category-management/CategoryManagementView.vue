@@ -6,7 +6,9 @@ import { deleteCategoryApi, getCategoryListApi, updateCategoryApi } from '@/api/
 import AddCategoryDialog from '@/components/dialog/add/AddCategoryDialog.vue'
 import { isEmpty } from '@/utils'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const currentCategory = ref<number>(0)
 const currentSecondCategory = ref<number>(0)
 const currentThirdCategory = ref<number>(0)
@@ -61,6 +63,8 @@ const updateCategory = (value: Category) => {
 	updateCategoryApi(value).then((res) => {
 		if (res) {
 			ElMessage.success('修改成功')
+			// 更新分类
+			store.dispatch('getCategoryList')
 		}
 	}).catch((err) => {
 		console.log(err)
@@ -91,6 +95,8 @@ const deleteCategory = (value: number, index: number, level: number) => {
 				if (level === 3) {
 					thirdLevelCategoryList.value?.splice(index, 1)
 				}
+				// 更新分类
+				store.dispatch('getCategoryList')
 			}
 		})
 	}).catch(() => {
@@ -155,7 +161,7 @@ const closeAddCategoryDialog = (isAdd: boolean, parentId: number, level: number)
 						<div class='category-item-content'>
 							<el-radio v-model='currentCategory' @change='(value) => handleSelect(value, item.level)'
 												:label='item.categoryId'>
-								<el-input v-model='item.name' size='small' />
+								<el-input v-model='item.name' />
 							</el-radio>
 							<div class='option-button'>
 								<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
@@ -179,14 +185,14 @@ const closeAddCategoryDialog = (isAdd: boolean, parentId: number, level: number)
 			<div class='category-card'>
 				<el-scrollbar class='category-card-item' height='550'>
 					<!--缺省-->
-					<el-empty v-if='categoryList.length === 0' description='暂无数据' />
+					<el-empty v-if='!secondLevelCategoryList || secondLevelCategoryList.length === 0' description='暂无数据' />
 					<!--二级分类列表-->
 					<div v-else>
 						<div v-for='(item, index) in secondLevelCategoryList' :key='index' class='category-item'>
 							<div class='category-item-content'>
 								<el-radio v-model='currentSecondCategory' @change='(value) => handleSelect(value, item.level)'
 													:label='item.categoryId'>
-									<el-input v-model='item.name' size='small' />
+									<el-input v-model='item.name' />
 								</el-radio>
 								<div class='option-button'>
 									<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>
@@ -211,13 +217,13 @@ const closeAddCategoryDialog = (isAdd: boolean, parentId: number, level: number)
 			<div class='category-card'>
 				<el-scrollbar class='category-card-item' height='550'>
 					<!--缺省-->
-					<el-empty v-if='categoryList.length === 0' description='暂无数据' />
+					<el-empty v-if='!thirdLevelCategoryList ||thirdLevelCategoryList.length === 0' description='暂无数据' />
 					<!--三级分类列表-->
 					<div v-else>
 						<div v-for='(item, index) in thirdLevelCategoryList' :key='index' class='category-item'>
 							<div class='category-item-content'>
 								<el-radio v-model='currentThirdCategory' :label='item.categoryId'>
-									<el-input v-model='item.name' size='small' />
+									<el-input v-model='item.name' />
 								</el-radio>
 								<div class='option-button'>
 									<el-button @click='updateCategory(item)' type='info' link>编辑</el-button>

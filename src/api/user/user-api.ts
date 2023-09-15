@@ -28,9 +28,16 @@ const getUserPagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<Ax
     }, true)
 }
 
-// 获取用户反馈列表
-const getFeedbackListApi = (): Promise<AxiosResponse> => {
-    return request({url: '/admin/user/feedback/list', method: 'GET'}, true)
+// 更新用户状态接口
+const updateUserStateApi = (userId: number, state: number): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/user/update_state',
+        method: 'PUT',
+        params: {
+            user_id: userId,
+            state: state
+        }
+    }, true)
 }
 
-export { addAdminApi, getUserinfoApi, getUserPagesApi, getFeedbackListApi }
+export { addAdminApi, getUserinfoApi, getUserPagesApi, updateUserStateApi }

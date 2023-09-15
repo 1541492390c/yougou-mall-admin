@@ -13,6 +13,9 @@ const routes: Array<RouteRecordRaw> = [
         path: '/dashboard',
         name: 'dashboard',
         component: () => import('@/views/dashboard/DashboardView.vue'),
+        meta: {
+            title: '控制台'
+        },
         children: [
             // 首页
             {

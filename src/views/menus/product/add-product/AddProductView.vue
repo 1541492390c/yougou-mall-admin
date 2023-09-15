@@ -1,14 +1,14 @@
 <script setup lang='ts'>
-import { computed, h, onMounted, reactive, ref, VNode, watch } from 'vue'
-import { AttrValue, Category } from '@/interface/product'
+import { computed, h, reactive, ref, VNode, watch } from 'vue'
+import { AttrValue } from '@/interface/product'
 import { UploadFile, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
 import { UploadFileTypeEnum } from '@/enums'
-import { getCategoryListApi } from '@/api/product/category-api'
 import { isEmpty } from '@/utils'
+import { useStore } from 'vuex'
 
-const categoryList = ref<Array<Category>>([])
+const store = useStore()
 const fileList = ref<Array<UploadUserFile>>([])
 
 const tableColumnList = ref<any>({
@@ -30,10 +30,6 @@ const formData = reactive<Record<string, any>>({
 	recommended: false,
 	isDiscount: false,
 	categoryNode: ''
-})
-
-onMounted(() => {
-	getCategoryList()
 })
 
 // 计算规格
@@ -102,17 +98,6 @@ watch(calculateAttr, (newValue) => {
 		tableColumnList.value.tableBodyList = []
 	}
 }, {deep: true})
-
-// 获取分类列表
-const getCategoryList = (): void => {
-	getCategoryListApi().then((res) => {
-		if (res) {
-			categoryList.value = res.data
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
 
 // 选择分类
 const handleSelectCategory = (value: Array<number>): void => {
@@ -259,17 +244,17 @@ const addProduct = (): void => {
 			<span>添加商品</span>
 		</div>
 		<div class='main'>
-			<el-form :model='formData'>
+			<el-form :model='formData' label-width='120'>
 				<el-row>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
-							<el-form-item label='商品分类' prop='category' required style='width: 100%'>
-								<el-cascader :options='categoryList' :props="{label: 'name', value: 'categoryId'}" placeholder='请选择分类'
+							<el-form-item label='商品分类' prop='categoryNode' required style='width: 100%'>
+								<el-cascader :options='store.state.categoryList' :props="{label: 'name', value: 'categoryId'}" placeholder='请选择分类'
 														 @change='handleSelectCategory' style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='所属品牌(选填)' prop='brandId' style='width: 100%'>
 								<el-select placeholder='请选择品牌' style='width: 100%'></el-select>
@@ -278,24 +263,23 @@ const addProduct = (): void => {
 					</el-col>
 				</el-row>
 				<el-row>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='商品名称' prop='name' required style='width: 100%'>
-								<el-input placeholder='请输入商品名称' size='small' />
+								<el-input placeholder='请输入商品名称' />
 							</el-form-item>
 						</div>
 					</el-col>
-					<el-col v-if='formData.isDiscount' :span='12'>
+					<el-col v-if='formData.isDiscount' :span='10'>
 						<div class='form-row'>
 							<el-form-item label='商品折扣' prop='discount' style='width: 100%'>
-								<el-input-number v-model='formData.discount' placeholder='请输入商品折扣' :min='1' :max='9'
-																 size='small' style='width: 100%' />
+								<el-input-number v-model='formData.discount' placeholder='请输入商品折扣' :min='1' :max='9' style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>
 				</el-row>
 				<el-row>
-					<el-col :span='12'>
+					<el-col :span='14'>
 						<div class='form-row'>
 							<el-form-item label='商品图片'>
 								<el-upload
@@ -315,14 +299,14 @@ const addProduct = (): void => {
 					</el-col>
 				</el-row>
 				<el-row>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='是否推荐' prop='recommended' style='width: 100%'>
 								<el-switch v-model='formData.recommended' />
 							</el-form-item>
 						</div>
 					</el-col>
-					<el-col :span='12'>
+					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='是否折扣' prop='isDiscount' style='width: 100%'>
 								<el-switch v-model='formData.isDiscount' @change='discountChange' />

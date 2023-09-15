@@ -1,29 +1,25 @@
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue'
-import { User } from '@/interface/user'
+import { onMounted } from 'vue'
 import ViewHeader from '@/components/header/ViewHeader.vue'
 import Menus from '@/components/menus/Menus.vue'
-import { getUserinfoApi } from '@/api/user/user-api'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 onMounted(() => {
 	getUserinfo()
+	getCategoryList()
 })
 
-const userinfo = ref<User>()
-
-// watch(() => store.getters.userinfo, (newValue) => {
-//     userinfo.value = newValue
-// 		console.log(newValue)
-// })
-
+// 获取用户信息
 const getUserinfo = (): void => {
-	getUserinfoApi().then((res): void => {
-		if (res) {
-			userinfo.value = res.data
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
+	store.dispatch('getUserinfo')
+}
+
+// 获取分类列表
+const getCategoryList = (): void => {
+	store.dispatch('getCategoryList')
+
 }
 </script>
 
@@ -35,7 +31,7 @@ const getUserinfo = (): void => {
 			</el-aside>
 			<el-container>
 				<el-header>
-					<view-header :userinfo='userinfo' />
+					<view-header />
 				</el-header>
 				<el-main>
 					<router-view />

@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <script setup lang='ts'>
 import { onMounted, ref, watch } from 'vue'
 import { RouteRecordRaw, useRouter } from 'vue-router'

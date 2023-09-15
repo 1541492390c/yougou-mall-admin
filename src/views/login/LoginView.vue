@@ -146,11 +146,12 @@ const formRules = reactive<FormRules>({
 
 .login-button {
 	width: 100%;
-	height: 42px;
 }
 
 .captcha {
 	border: #ececec solid 1px;
 	cursor: pointer;
+	width: 100%;
+	height: 30px;
 }
 </style>

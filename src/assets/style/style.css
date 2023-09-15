@@ -5,9 +5,9 @@ html, body, #app, .el-container {
   min-width: 1400px;
 }
 
-.el-input {
-  height: 42px;
-}
+/*.el-input {*/
+/*  height: 42px;*/
+/*}*/
 
 .el-header {
   padding: 0 !important;
@@ -51,4 +51,8 @@ html, body, #app, .el-container {
 .form-title {
   width: 80px;
   font-size: 14px;
+}
+
+.search-form {
+  padding: 20px;
 }

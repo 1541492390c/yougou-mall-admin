@@ -5,7 +5,7 @@ import { onMounted, reactive, ref } from 'vue'
 
 const categoryList = ref<Array<Category>>([])
 const categoryOptions = ref<Array<number>>([])
-const formData = reactive({
+const formData = reactive<Record<string, any>>({
 	expired: 1,
 	quota: 0,
 	categoryNode: '',
@@ -40,45 +40,49 @@ const handleSelect = (value: Array<number>): void => {
 			<span>添加品牌</span>
 		</div>
 		<div class='main'>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>优惠券类型</span>
-						<el-cascader :model-value='categoryOptions' :options='categoryList'
-												 @change='(value: Array<number>) => handleSelect(value)'
-												 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择'
-												 style='width: 100%' />
+			<el-form :model='formData' label-width='120'>
+				<el-row>
+					<el-col :span='10'>
+						<div class='form-row'>
+							<el-form-item label='优惠券类型' prop='categoryNode' required style='width: 100%'>
+								<el-cascader :model-value='categoryOptions' :options='categoryList'
+														 @change='(value: Array<number>) => handleSelect(value)'
+														 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择' style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col :span='10'>
+						<div class='form-row'>
+							<el-form-item label='过期天数' prop='expired' required style='width: 100%'>
+								<el-input-number v-model='formData.expired' :min='1' :max='10' placeholder='请输入过期天数' style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='10'>
+						<div class='form-row'>
+							<el-form-item label='配额' prop='quota' required style='width: 100%'>
+								<el-input-number v-model='formData.quota' :min='0' placeholder='请输入配额' style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='10'>
+						<div class='form-row'>
+							<el-form-item label='简介' prop='description' required style='width: 100%'>
+								<el-input v-model='formData.description' type='textarea' placeholder='请输入简介' style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<div class='add-button'>
+						<el-button type='primary'>确认添加</el-button>
 					</div>
-				</el-col>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>过期天数</span>
-						<el-input-number v-model='formData.expired' :min='1' :max='10' placeholder='请输入过期天数'
-														 style='width: 100%' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>配额</span>
-						<el-input-number v-model='formData.quota' :min='0' placeholder='请输入配额' style='width: 100%' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span='12'>
-					<div class='form-row'>
-						<span class='form-title'>简介</span>
-						<el-input v-model='formData.description' type='textarea' placeholder='请输入简介' style='width: 100%' />
-					</div>
-				</el-col>
-			</el-row>
-			<el-row>
-				<div class='add-button'>
-					<el-button type='primary'>确认添加</el-button>
-				</div>
-			</el-row>
+				</el-row>
+			</el-form>
 		</div>
 	</div>
 </template>

@@ -95,7 +95,7 @@ const formRules = reactive<FormRules>({
 				</el-form-item>
 				<el-form-item>
 					<div class='form-bottom'>
-						<el-button @click='updatePassword(formRef)' type='primary' class='update-password-button'>确认修改</el-button>
+						<el-button @click='updatePassword(formRef)' type='primary'>确认修改</el-button>
 					</div>
 				</el-form-item>
 			</el-form>
@@ -108,9 +108,5 @@ const formRules = reactive<FormRules>({
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.update-password-button {
-  height: 42px;
 }
 </style>

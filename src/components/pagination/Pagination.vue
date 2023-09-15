@@ -15,7 +15,3 @@ const currentChange = (value: number): void => {
 									 small layout='prev, pager, next' background />
 	</div>
 </template>
-
-<style scoped lang='scss'>
-
-</style>

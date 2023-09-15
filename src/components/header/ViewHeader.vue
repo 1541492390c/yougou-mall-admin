@@ -1,25 +1,24 @@
 <script setup lang='ts'>
-import { defineComponent, defineProps, reactive } from 'vue'
-import { User } from '@/interface/user'
+import { defineComponent, ref } from 'vue'
 import { Edit, SwitchButton } from '@element-plus/icons-vue'
 import UpdatePasswordDialog from '@/components/dialog/update/UpdatePasswordDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { logoutApi } from '@/api/auth/auth-api'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const router = useRouter()
-const props = defineProps<{ userinfo: User | undefined }>()
+const store = useStore()
 const components = defineComponent({ edit: Edit, switchButton: SwitchButton })
-const data = reactive({
-	showUpdatePassword: false
-})
+const showUpdatePassword = ref<boolean>(false)
 
 const showUpdatePasswordDialog = (): void => {
-	data.showUpdatePassword = true
+	console.log(store.getters.userinfo)
+	showUpdatePassword.value = true
 }
 
 const closeUpdatePasswordDialog = (): void => {
-	data.showUpdatePassword = false
+	showUpdatePassword.value = false
 }
 
 const logout = (): void => {
@@ -46,7 +45,7 @@ const logout = (): void => {
 		<div class='select-bar'>
 			<div class='select-bar-block'>
 				<el-dropdown>
-					<span class='username'>您好,{{props.userinfo?.nickname}}</span>
+					<span class='username'>您好,{{store.getters.userinfo.nickname}}</span>
 					<template #dropdown>
 						<el-dropdown-menu>
 							<el-dropdown-item :icon='components.edit' @click='showUpdatePasswordDialog'>
@@ -61,7 +60,7 @@ const logout = (): void => {
 			</div>
 		</div>
 
-		<update-password-dialog :show='data.showUpdatePassword' @close-update-password-dialog='closeUpdatePasswordDialog' />
+		<update-password-dialog :show='showUpdatePassword' @close-dialog='closeUpdatePasswordDialog' />
 	</div>
 </template>
 

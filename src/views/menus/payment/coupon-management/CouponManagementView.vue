@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import Pagination from '@/components/pagination/Pagination.vue'
 import { deleteCouponApi, getCouponPagesApi, updateCouponApi } from '@/api/payment/coupon-api'
 import { BrandTable, CouponTable } from '@/interface/extension'
@@ -13,6 +13,10 @@ const currentPage = ref<number>(1)
 const currentSize = ref<number>(10)
 const categoryList = ref<Array<Category>>([])
 const tableData = ref<Array<CouponTable>>([])
+const searchData = reactive<Record<string, any>>({
+	categoryNode: '',
+	searchOptions: []
+})
 
 onMounted(() => {
 	getTableData()
@@ -90,6 +94,20 @@ const deleteCoupon = (value: number, index: number): void => {
 
 <template>
 	<div class='card'>
+		<!--搜索栏-->
+		<el-form :model='searchData' inline class='search-form'>
+			<!--分类-->
+			<el-form-item label='分类:'>
+				<el-cascader :model-value='searchData.searchOptions' :options='categoryList'
+										 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择'
+										 style='width: 300px' />
+			</el-form-item>
+			<el-form-item>
+				<el-button>重置</el-button>
+				<el-button type='primary'>重置</el-button>
+			</el-form-item>
+		</el-form>
+		<!--表格数据-->
 		<el-table :data='tableData'>
 			<template #empty>
 				<el-empty description='暂无数据' />
