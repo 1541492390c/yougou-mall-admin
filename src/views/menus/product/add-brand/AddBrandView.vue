@@ -1,13 +1,18 @@
 <script setup lang='ts'>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useStore } from 'vuex'
+import { saveBrandApi } from '@/api/product/brand-api'
+import { ElMessage, FormInstance } from 'element-plus'
+import { Brand } from '@/interface/product'
 
 const store = useStore()
+const form = ref<FormInstance>()
 const formData = reactive<Record<string, any>>({
 	categoryNode: '',
 	name: '',
-	description: ''
+	description: '',
+	img: ''
 })
 
 // 选择分类
@@ -18,6 +23,23 @@ const handleSelectCategory = (value: Array<number>): void => {
 	}
 	formData.categoryNode = categoryNode.substring(0, categoryNode.lastIndexOf('-'))
 }
+
+// 添加品牌
+const addBrand = (form: FormInstance | undefined): void => {
+	form?.validate((valid) => {
+		if (!valid) {
+			return
+		}
+		saveBrandApi(formData as Brand).then((res) => {
+			if (res) {
+				ElMessage.success('添加成功')
+				form?.resetFields()
+			}
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+}
 </script>
 
 <template>
@@ -26,7 +48,7 @@ const handleSelectCategory = (value: Array<number>): void => {
 			<span>添加品牌</span>
 		</div>
 		<div class='main'>
-			<el-form :model='formData' label-width='120'>
+			<el-form ref='form' :model='formData' label-width='120'>
 				<el-row>
 					<el-col :span='10'>
 						<div class='form-row'>
@@ -72,7 +94,7 @@ const handleSelectCategory = (value: Array<number>): void => {
 				</el-row>
 				<el-row>
 					<div class='add-button'>
-						<el-button type='primary'>确认添加</el-button>
+						<el-button @click='addBrand(form)' type='primary'>确认添加</el-button>
 					</div>
 				</el-row>
 			</el-form>

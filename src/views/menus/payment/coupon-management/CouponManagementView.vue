@@ -15,7 +15,8 @@ const categoryList = ref<Array<Category>>([])
 const tableData = ref<Array<CouponTable>>([])
 const searchData = reactive<Record<string, any>>({
 	categoryNode: '',
-	searchOptions: []
+	quota: 0,
+	expired: 1
 })
 
 onMounted(() => {
@@ -98,9 +99,16 @@ const deleteCoupon = (value: number, index: number): void => {
 		<el-form :model='searchData' inline class='search-form'>
 			<!--分类-->
 			<el-form-item label='分类:'>
-				<el-cascader :model-value='searchData.searchOptions' :options='categoryList'
-										 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择'
-										 style='width: 300px' />
+				<el-cascader :options='categoryList' :props="{value: 'categoryId', label: 'name', checkStrictly: true}"
+										 placeholder='请选择' style='width: 300px' />
+			</el-form-item>
+			<!--配额-->
+			<el-form-item label='配额:'>
+				<el-input-number v-model='searchData.quota' :min='0' placeholder='请输入配额' />
+			</el-form-item>
+			<!--过期天数-->
+			<el-form-item label='过期天数:'>
+				<el-input-number v-model='searchData.expired' :min='1' :max='10' placeholder='请输入过期天数' />
 			</el-form-item>
 			<el-form-item>
 				<el-button>重置</el-button>

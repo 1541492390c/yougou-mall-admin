@@ -23,9 +23,8 @@ const tableData = ref<Array<ProductTable>>([])
 const searchData = reactive<Record<string, any>>({
 	categoryNode: '',
 	name: '',
-	isDiscount: undefined,
-	recommended: undefined,
-	searchOptions: []
+	isDiscount: false,
+	recommended: false
 })
 
 onMounted(() => {
@@ -129,8 +128,8 @@ const deleteProduct = (value: number, index: number): void => {
 		<el-form :model='searchData' inline class='search-form'>
 			<!--分类-->
 			<el-form-item label='分类:'>
-				<el-cascader :model-value='searchData.searchoptions' :options='store.getters.categoryList'
-										 :props="{value: 'categoryId', label: 'name'}" placeholder='请选择' style='width: 280px' />
+				<el-cascader :options='store.getters.categoryList' :props="{value: 'categoryId', label: 'name'}"
+										 placeholder='请选择' style='width: 280px' />
 			</el-form-item>
 			<!--商品名称-->
 			<el-form-item label='商品名称:'>

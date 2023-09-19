@@ -2,16 +2,25 @@ import { AxiosResponse } from 'axios'
 import request from '@/request'
 import { Coupon } from '@/interface/payment'
 
+// 保存优惠券接口
+const saveCouponApi = (value: Coupon): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/payment/coupon/save',
+        method: 'POST',
+        data: value
+    }, true)
+}
+
 // 获取优惠券分页信息
 const getCouponPagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<AxiosResponse> => {
     return request({
-        url: '/payment/coupon/pages',
+        url: '/admin/payment/coupon/pages',
         method: 'GET',
         params: {
             page_num: pageNum,
             page_size: pageSize
         }
-    })
+    }, true)
 }
 
 // 更新优惠券接口
@@ -32,4 +41,4 @@ const deleteCouponApi = (value: number): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getCouponPagesApi, updateCouponApi, deleteCouponApi }
+export { saveCouponApi, getCouponPagesApi, updateCouponApi, deleteCouponApi }

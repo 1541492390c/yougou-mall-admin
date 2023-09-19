@@ -2,7 +2,11 @@
 import { getCategoryListApi } from '@/api/product/category-api'
 import { Category } from '@/interface/product'
 import { onMounted, reactive, ref } from 'vue'
+import { ElMessage, FormInstance } from 'element-plus'
+import { saveCouponApi } from '@/api/payment/coupon-api'
+import { Coupon } from '@/interface/payment'
 
+const form = ref<FormInstance>()
 const categoryList = ref<Array<Category>>([])
 const categoryOptions = ref<Array<number>>([])
 const formData = reactive<Record<string, any>>({
@@ -32,6 +36,23 @@ const handleSelect = (value: Array<number>): void => {
 	categoryOptions.value = value
 	formData.categoryNode = value.join('-')
 }
+
+// 添加优惠券
+const addCoupon = (form: FormInstance | undefined): void => {
+	form?.validate((valid) => {
+		if (valid) {
+			return
+		}
+		saveCouponApi(formData as Coupon).then((res) => {
+			if (res) {
+				ElMessage.success('添加成功')
+				form?.resetFields()
+			}
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+}
 </script>
 
 <template>
@@ -40,7 +61,7 @@ const handleSelect = (value: Array<number>): void => {
 			<span>添加品牌</span>
 		</div>
 		<div class='main'>
-			<el-form :model='formData' label-width='120'>
+			<el-form ref='form' :model='formData' label-width='120'>
 				<el-row>
 					<el-col :span='10'>
 						<div class='form-row'>
@@ -79,7 +100,7 @@ const handleSelect = (value: Array<number>): void => {
 				</el-row>
 				<el-row>
 					<div class='add-button'>
-						<el-button type='primary'>确认添加</el-button>
+						<el-button @click='addCoupon(form)' type='primary'>确认添加</el-button>
 					</div>
 				</el-row>
 			</el-form>

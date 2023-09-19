@@ -1,8 +1,9 @@
 <script setup lang='ts'>
 import { computed, onMounted, ref } from 'vue'
 import { Order } from '@/interface/order'
-import { getOrderPagesApi } from '@/api/order/order-api'
+import { getOrderPagesApi, updateOrderStateApi } from '@/api/order/order-api'
 import Pagination from '@/components/pagination/Pagination.vue'
+import { ElMessage } from 'element-plus'
 
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
@@ -57,6 +58,23 @@ const currentPageChange = (value: number): void => {
 	currentPage.value = value
 	getTableData()
 }
+
+// 更新订单状态
+const updateOrderState = (orderId: number, index: number): void => {
+	updateOrderStateApi(orderId, 3).then((res) => {
+		if (res) {
+			ElMessage.success('发货成功')
+			// 更新表格数据
+			for (let i in tableData.value) {
+				if (parseInt(i) === index) {
+					tableData.value[i].state = 3
+				}
+			}
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
 </script>
 
 <template>
@@ -110,7 +128,8 @@ const currentPageChange = (value: number): void => {
 			</el-table-column>
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
-					<el-button v-if='scope.row.state === 2' type='danger' link >发货</el-button>
+					<el-button @click='updateOrderState' v-if='scope.row.state === 2' type='danger' link>发货</el-button>
+					<el-button v-if='scope.row.state === 3' type='info' link disabled>已发货,待客户接收</el-button>
 					<el-button v-if='scope.row.state === 4' type='success' link disabled>该订单已完成</el-button>
 				</template>
 			</el-table-column>

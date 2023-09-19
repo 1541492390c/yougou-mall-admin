@@ -1,12 +1,13 @@
 <script setup lang='ts'>
 import { reactive, ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import { ElMessage, UploadFile, UploadProps, UploadRequestOptions } from 'element-plus'
+import { ElMessage, FormInstance, UploadFile, UploadProps, UploadRequestOptions } from 'element-plus'
 import { UploadFileTypeEnum } from '@/enums'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
 import { saveBannerApi } from '@/api/platform/banner-api'
 import { Banner } from '@/interface/platform'
 
+const form = ref<FormInstance>()
 const formData = reactive<Record<string, any>>({
 	type: 1,
 	page: '',
@@ -47,22 +48,19 @@ const uploadFile = (option: UploadRequestOptions): void => {
 }
 
 // 添加轮播图
-const addBanner = () => {
-	if (formData.page === '' || formData.img === '' || formData.link === '' || formData.description === '') {
-		ElMessage.error('请输入完整信息')
-		return
-	}
-	saveBannerApi(formData as Banner).then((res) => {
-		if (res) {
-			ElMessage.success('添加成功')
-			formData.description = ''
-			formData.img = ''
-			formData.link = ''
-			formData.page = ''
-			formData.type = 1
+const addBanner = (form: FormInstance | undefined) => {
+	form?.validate((valid) => {
+		if (!valid) {
+			return
 		}
-	}).catch((err) => {
-		console.log(err)
+		saveBannerApi(formData as Banner).then((res) => {
+			if (res) {
+				ElMessage.success('添加成功')
+				form?.resetFields()
+			}
+		}).catch((err) => {
+			console.log(err)
+		})
 	})
 }
 </script>
@@ -73,7 +71,7 @@ const addBanner = () => {
 			<span>添加轮播图</span>
 		</div>
 		<div class='main'>
-			<el-form :model='formData' label-width='120'>
+			<el-form ref='form' :model='formData' label-width='120'>
 				<el-row>
 					<el-col :span='10'>
 						<div class='form-row'>

@@ -47,6 +47,8 @@ export default createStore({
                 if (res) {
                     commit('SET_CATEGORY_LIST', res.data)
                 }
+            }).catch((err) => {
+                console.log(err)
             })
         }
     },

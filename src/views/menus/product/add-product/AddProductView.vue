@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, h, reactive, ref, VNode, watch } from 'vue'
 import { AttrValue } from '@/interface/product'
-import { UploadFile, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'
+import { FormInstance, UploadFile, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
 import { UploadFileTypeEnum } from '@/enums'
@@ -9,6 +9,7 @@ import { isEmpty } from '@/utils'
 import { useStore } from 'vuex'
 
 const store = useStore()
+const form = ref<FormInstance>()
 const fileList = ref<Array<UploadUserFile>>([])
 
 const tableColumnList = ref<any>({
@@ -26,7 +27,8 @@ const attrItem = ref<any>([
 const formData = reactive<Record<string, any>>({
 	name: '',
 	price: 0,
-	discount: null,
+	brandId: undefined,
+	discount: undefined,
 	recommended: false,
 	isDiscount: false,
 	categoryNode: ''
@@ -233,6 +235,7 @@ const addProduct = (): void => {
 		let specsStr: string = JSON.stringify(specsObj)
 		sku.push(specsStr)
 	}
+	console.log(formData)
 	console.log(sku)
 	console.log(attrItem.value)
 }
@@ -244,7 +247,8 @@ const addProduct = (): void => {
 			<span>添加商品</span>
 		</div>
 		<div class='main'>
-			<el-form :model='formData' label-width='120'>
+			<!--商品基本信息-->
+			<el-form ref='form' :model='formData' label-width='120'>
 				<el-row>
 					<el-col :span='10'>
 						<div class='form-row'>
@@ -257,7 +261,7 @@ const addProduct = (): void => {
 					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='所属品牌(选填)' prop='brandId' style='width: 100%'>
-								<el-select placeholder='请选择品牌' style='width: 100%'></el-select>
+								<el-select v-model='formData.brandId' placeholder='请选择品牌' style='width: 100%'></el-select>
 							</el-form-item>
 						</div>
 					</el-col>
@@ -266,7 +270,7 @@ const addProduct = (): void => {
 					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='商品名称' prop='name' required style='width: 100%'>
-								<el-input placeholder='请输入商品名称' />
+								<el-input v-model='formData.name' placeholder='请输入商品名称' />
 							</el-form-item>
 						</div>
 					</el-col>
@@ -316,6 +320,7 @@ const addProduct = (): void => {
 				</el-row>
 			</el-form>
 
+			<!--商品规格-->
 			<div style='padding:35px'>
 				<div class='sku-spec'>
 					<span>商品规格</span>
@@ -356,6 +361,7 @@ const addProduct = (): void => {
 					</div>
 				</div>
 
+				<!--商品sku-->
 				<el-table :data='tableColumnList.tableBodyList' stripe tooltip-effect='dark' border>
 					<template #empty>
 						<el-empty description='暂无数据' />

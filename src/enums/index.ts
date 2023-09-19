@@ -7,21 +7,9 @@ enum ResponseCodeEnum {
     UN_VALID_TOKEN_ERROR = 'A0003',
 }
 
-// 轮播图类型
-enum BannerTypeEnum {
-    PC = 1
-}
-
-// 收获地址对话框类型
-enum AddrModalTypeEnum {
-    ADD = 1,
-    UPDATE
-}
-
 // 上传资源类型
 enum UploadFileTypeEnum {
-    AVATAR = 1,
     PRODUCT = 4
 }
 
-export { ResponseCodeEnum, BannerTypeEnum, AddrModalTypeEnum, UploadFileTypeEnum }
+export { ResponseCodeEnum, UploadFileTypeEnum }

@@ -13,4 +13,16 @@ const getOrderPagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<A
     }, true)
 }
 
-export { getOrderPagesApi }
+// 更新订单状态接口
+const updateOrderStateApi = (orderId: number, state: number): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/order/update_state',
+        method: 'PUT',
+        params: {
+            order_id: orderId,
+            state: state
+        }
+    }, true)
+}
+
+export { getOrderPagesApi, updateOrderStateApi }

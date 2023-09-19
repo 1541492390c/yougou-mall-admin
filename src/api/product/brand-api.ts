@@ -2,6 +2,15 @@ import { AxiosResponse } from 'axios'
 import request from '@/request'
 import { Brand } from '@/interface/product'
 
+// 保存品牌接口
+const saveBrandApi = (value: Brand): Promise<AxiosResponse> => {
+    return request({
+        url: '/product/brand/save',
+        method: 'POST',
+        data: value
+    }, true)
+}
+
 // 获取品牌列表接口
 const getBrandPagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<AxiosResponse> => {
     return request({
@@ -32,4 +41,4 @@ const deleteBrandApi = (value: number): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getBrandPagesApi, updateBrandApi, deleteBrandApi }
+export { saveBrandApi, getBrandPagesApi, updateBrandApi, deleteBrandApi }
