@@ -17,13 +17,21 @@ const getUserinfoApi = (): Promise<AxiosResponse> => {
 }
 
 // 获取用户分页信息接口
-const getUserPagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<AxiosResponse> => {
+const getUserPagesApi = (
+    pageNum: number = 1,
+    pageSize: number = 10,
+    gender: number | undefined = undefined,
+    state: number | undefined = undefined,
+    nickname: string | undefined = undefined): Promise<AxiosResponse> => {
     return request({
         url: '/admin/user/pages',
         method: 'GET',
         params: {
             page_num: pageNum,
-            page_size: pageSize
+            page_size: pageSize,
+            gender: gender,
+            state: state,
+            nickname: nickname
         }
     }, true)
 }

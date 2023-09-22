@@ -98,7 +98,7 @@ const deleteBrand = (value: number, index: number): void => {
 			</el-form-item>
 			<el-form-item>
 				<el-button>重置</el-button>
-				<el-button type='primary'>重置</el-button>
+				<el-button type='primary'>搜索</el-button>
 			</el-form-item>
 		</el-form>
 		<!--表格数据-->

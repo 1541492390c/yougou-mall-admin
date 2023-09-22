@@ -10,12 +10,20 @@ const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(10)
 const tableData = ref<Array<User>>()
-const genderOptions = ref<Array<any>>([{label: '保密', value: 0}, {label: '男', value: 1}, {label: '女', value: 2}])
-const stateOptions = ref<Array<any>>([{label: '禁用', value: 0}, {label: '正常', value: 1}])
+const genderOptions = ref<Array<any>>([
+	{label: '全部', value: undefined},
+	{label: '保密', value: 0},
+	{label: '男', value: 1},
+	{label: '女', value: 2}])
+const stateOptions = ref<Array<any>>([
+	{label: '全部', value: undefined},
+	{label: '禁用', value: 0},
+	{label: '正常', value: 1}
+])
 const searchData = reactive<Record<string, any>>({
 	nickname: '',
-	state: 1,
-	gender: 0
+	state: undefined,
+	gender: undefined
 })
 
 const gender = computed(() => (value: number) => {
@@ -43,7 +51,7 @@ const state = computed(() => (value: number) => {
 })
 
 const getTableData = (): void => {
-	getUserPagesApi(currentPage.value).then((res) => {
+	getUserPagesApi(currentPage.value, currentSize.value, searchData.state, searchData.gender, searchData.nickname).then((res) => {
 		if (res) {
 			tableData.value = res.data.list
 			total.value = res.data.total
@@ -51,6 +59,12 @@ const getTableData = (): void => {
 	}).catch((err) => {
 		console.log(err)
 	})
+}
+
+const search = (): void => {
+	// 搜索从第一页开始查询
+	currentPage.value = 1
+	getTableData()
 }
 
 const currentPageChange = (value: number): void => {
@@ -97,7 +111,7 @@ const updateUserState = (userId: number, state: number): void => {
 			<el-form-item>
 				<div>
 					<el-button>重置</el-button>
-					<el-button type='primary'>搜索</el-button>
+					<el-button @click='search' type='primary'>搜索</el-button>
 				</div>
 			</el-form-item>
 		</el-form>

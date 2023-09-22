@@ -20,11 +20,15 @@ const showUpdateProductDialog = ref<boolean>(false)
 const shopUpdateCoverDialog = ref<boolean>(false)
 const currentImgList = ref<Array<string>>([])
 const tableData = ref<Array<ProductTable>>([])
+const booleanOptions = ref<Array<any>>([
+	{label: '全部', value: undefined},
+	{label: '是', value: true},
+	{label: '否', value: false}])
 const searchData = reactive<Record<string, any>>({
 	categoryNode: '',
 	name: '',
-	isDiscount: false,
-	recommended: false
+	isDiscount: undefined,
+	recommended: undefined
 })
 
 onMounted(() => {
@@ -131,21 +135,25 @@ const deleteProduct = (value: number, index: number): void => {
 				<el-cascader :options='store.getters.categoryList' :props="{value: 'categoryId', label: 'name'}"
 										 placeholder='请选择' style='width: 280px' />
 			</el-form-item>
+			<!--是否折扣-->
+			<el-form-item label='是否折扣:'>
+				<el-select v-model='searchData.isDiscount'>
+					<el-option v-for='(item, index) in booleanOptions' :label='item.label' :value='item.value' :key='index' />
+				</el-select>
+			</el-form-item>
+			<!--是否推荐-->
+			<el-form-item label='是否推荐:'>
+				<el-select v-model='searchData.recommended' w>
+					<el-option v-for='(item, index) in booleanOptions' :label='item.label' :value='item.value' :key='index' />
+				</el-select>
+			</el-form-item>
 			<!--商品名称-->
 			<el-form-item label='商品名称:'>
 				<el-input v-model='searchData.name' placeholder='请输入商品名称' />
 			</el-form-item>
-			<!--是否折扣-->
-			<el-form-item label='是否折扣:'>
-				<el-switch v-model='searchData.isDiscount' />
-			</el-form-item>
-			<!--是否推荐-->
-			<el-form-item label='是否推荐:'>
-				<el-switch v-model='searchData.recommended' />
-			</el-form-item>
 			<el-form-item>
 				<el-button>重置</el-button>
-				<el-button type='primary'>重置</el-button>
+				<el-button type='primary'>搜索</el-button>
 			</el-form-item>
 		</el-form>
 		<!--表格数据-->
