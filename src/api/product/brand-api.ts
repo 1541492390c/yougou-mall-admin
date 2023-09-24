@@ -5,22 +5,28 @@ import { Brand } from '@/interface/product'
 // 保存品牌接口
 const saveBrandApi = (value: Brand): Promise<AxiosResponse> => {
     return request({
-        url: '/product/brand/save',
+        url: '/admin/product/brand/save',
         method: 'POST',
         data: value
     }, true)
 }
 
-// 获取品牌列表接口
-const getBrandPagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<AxiosResponse> => {
+// 搜索品牌列表接口
+const getBrandPagesApi = (
+    pageNum: number = 1,
+    pageSize: number = 10,
+    categoryNode: string | undefined = undefined,
+    name: string | undefined = undefined): Promise<AxiosResponse> => {
     return request({
-        url: '/product/brand/pages',
+        url: '/admin/product/brand/pages',
         method: 'GET',
         params: {
             page_num: pageNum,
-            page_size: pageSize
+            page_size: pageSize,
+            category_node: categoryNode,
+            name: name
         }
-    })
+    }, true)
 }
 
 // 更新品牌信息接口

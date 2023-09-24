@@ -5,12 +5,14 @@ import { Product } from '@/interface/product'
 import ProductSkuDetailDialog from '@/components/dialog/detail/ProductSkuDetailDialog.vue'
 import Pagination from '@/components/pagination/Pagination.vue'
 import { ProductTable } from '@/interface/extension'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 import defaultImage from '@/assets/img/default-image.png'
 import UpdateProductCoverDialog from '@/components/dialog/update/UpdateProductCoverDialog.vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
+const isSearch = ref<boolean>(false)
+const searchForm = ref<FormInstance>()
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(5)
@@ -28,7 +30,8 @@ const searchData = reactive<Record<string, any>>({
 	categoryNode: '',
 	name: '',
 	isDiscount: undefined,
-	recommended: undefined
+	recommended: undefined,
+	searchOptions: []
 })
 
 onMounted(() => {
@@ -36,7 +39,28 @@ onMounted(() => {
 })
 
 const getTableData = (): void => {
-	getProductPagesApi(currentPage.value, currentSize.value, undefined, undefined, undefined).then((res) => {
+	getProductPagesApi(currentPage.value, currentSize.value).then((res) => {
+		if (res) {
+			total.value = res.data.total
+			tableData.value = []
+
+			res.data.list.forEach((item: Product) => {
+				// 创建商品展示数据
+				let data: ProductTable = {
+					...item,
+					options: []
+				}
+				data.options = item.categoryNode.split('-').map(Number)
+				tableData.value.push(data)
+			})
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+const search = (): void => {
+	getProductPagesApi(currentPage.value, currentSize.value, searchData.isDiscount, searchData.recommended, searchData.name, searchData.categoryNode).then((res) => {
 		if (res) {
 			total.value = res.data.total
 			tableData.value = []
@@ -61,6 +85,26 @@ const handleSelect = (value: Array<number>, item: ProductTable): void => {
 	item.categoryNode = value.join('-')
 }
 
+const handleSelectSearchCategory = (value: Array<number>): void => {
+	searchData.categoryNode = value.join('-')
+}
+
+// 搜索
+const handleSearch = (): void => {
+	isSearch.value = true
+	currentPage.value = 1
+	search()
+}
+
+// 重置
+const handleReset = (): void => {
+	isSearch.value = false
+	currentPage.value = 1
+	searchData.searchOptions = []
+	searchForm.value?.resetFields()
+	getTableData()
+}
+
 const handleDiscountChange = (value: boolean, item: ProductTable): void => {
 	item.isDiscount = value
 	value ? item.discount = 9 : item.discount = undefined
@@ -68,7 +112,7 @@ const handleDiscountChange = (value: boolean, item: ProductTable): void => {
 
 const currentPageChange = (value: number): void => {
 	currentPage.value = value
-	getTableData()
+	isSearch.value ? search() : getTableData()
 }
 
 const openProductSkuDialog = (value: number): void => {
@@ -129,31 +173,32 @@ const deleteProduct = (value: number, index: number): void => {
 <template>
 	<div class='card'>
 		<!--搜索栏-->
-		<el-form :model='searchData' inline class='search-form'>
+		<el-form ref='searchForm' :model='searchData' inline class='search-form'>
 			<!--分类-->
-			<el-form-item label='分类:'>
-				<el-cascader :options='store.getters.categoryList' :props="{value: 'categoryId', label: 'name'}"
-										 placeholder='请选择' style='width: 280px' />
+			<el-form-item label='分类:' prop='categoryNode'>
+				<el-cascader :model-value='searchData.searchOptions' :options='store.getters.categoryList'
+										 :props="{value: 'categoryId', label: 'name'}"
+										 @change='handleSelectSearchCategory' placeholder='请选择分类' style='width: 280px' />
 			</el-form-item>
 			<!--是否折扣-->
-			<el-form-item label='是否折扣:'>
+			<el-form-item label='是否折扣:' prop='isDiscount'>
 				<el-select v-model='searchData.isDiscount'>
 					<el-option v-for='(item, index) in booleanOptions' :label='item.label' :value='item.value' :key='index' />
 				</el-select>
 			</el-form-item>
 			<!--是否推荐-->
-			<el-form-item label='是否推荐:'>
-				<el-select v-model='searchData.recommended' w>
+			<el-form-item label='是否推荐:' prop='recommended'>
+				<el-select v-model='searchData.recommended'>
 					<el-option v-for='(item, index) in booleanOptions' :label='item.label' :value='item.value' :key='index' />
 				</el-select>
 			</el-form-item>
 			<!--商品名称-->
-			<el-form-item label='商品名称:'>
+			<el-form-item label='商品名称:' prop='name'>
 				<el-input v-model='searchData.name' placeholder='请输入商品名称' />
 			</el-form-item>
 			<el-form-item>
-				<el-button>重置</el-button>
-				<el-button type='primary'>搜索</el-button>
+				<el-button @click='handleReset'>重置</el-button>
+				<el-button @click='handleSearch' type='primary'>搜索</el-button>
 			</el-form-item>
 		</el-form>
 		<!--表格数据-->

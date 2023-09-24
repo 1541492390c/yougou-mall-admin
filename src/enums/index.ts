@@ -9,7 +9,8 @@ enum ResponseCodeEnum {
 
 // 上传资源类型
 enum UploadFileTypeEnum {
-    PRODUCT = 4
+    PRODUCT = 4,
+    BRAND
 }
 
 export { ResponseCodeEnum, UploadFileTypeEnum }

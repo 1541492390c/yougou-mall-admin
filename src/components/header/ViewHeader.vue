@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import { Edit, SwitchButton } from '@element-plus/icons-vue'
 import UpdatePasswordDialog from '@/components/dialog/update/UpdatePasswordDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -11,6 +11,10 @@ const router = useRouter()
 const store = useStore()
 const components = defineComponent({ edit: Edit, switchButton: SwitchButton })
 const showUpdatePassword = ref<boolean>(false)
+
+watch(router.currentRoute, (newValue) => {
+	console.log(newValue.matched)
+})
 
 const showUpdatePasswordDialog = (): void => {
 	console.log(store.getters.userinfo)

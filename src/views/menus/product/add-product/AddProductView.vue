@@ -1,12 +1,13 @@
 <script setup lang='ts'>
 import { computed, h, reactive, ref, VNode, watch } from 'vue'
 import { AttrValue } from '@/interface/product'
-import { FormInstance, UploadFile, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'
+import { FormInstance, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
 import { UploadFileTypeEnum } from '@/enums'
 import { isEmpty } from '@/utils'
 import { useStore } from 'vuex'
+import UploadImage from '@/components/upload-img/UploadImage.vue'
 
 const store = useStore()
 const form = ref<FormInstance>()
@@ -103,11 +104,7 @@ watch(calculateAttr, (newValue) => {
 
 // 选择分类
 const handleSelectCategory = (value: Array<number>): void => {
-	let categoryNode: string = ''
-	for (let index in value) {
-		categoryNode += value[index] + '-'
-	}
-	formData.categoryNode = categoryNode.substring(0, categoryNode.lastIndexOf('-'))
+	formData.categoryNode = value.join('-')
 }
 
 // 添加规格
@@ -187,10 +184,10 @@ const discountChange = (value: any): void => {
 
 // 上传图片
 const uploadFile = (option: UploadRequestOptions): void => {
-	let formData: FormData = new FormData()
-	formData.append('resourceType', UploadFileTypeEnum.PRODUCT.toString())
-	formData.append('file', option.file)
-	uploadFileApi(formData).then((res) => {
+	let fileData: FormData = new FormData()
+	fileData.append('resourceType', UploadFileTypeEnum.PRODUCT.toString())
+	fileData.append('file', option.file)
+	uploadFileApi(fileData).then((res) => {
 		if (res) {
 			let fileName: string = res.data.substring(res.data.lastIndexOf('/') + 1, res.data.length)
 			fileList.value.push({name: fileName, url: res.data})
@@ -201,12 +198,12 @@ const uploadFile = (option: UploadRequestOptions): void => {
 }
 
 // 移除图片
-const handleRemove: UploadProps['onRemove'] = (uploadFile: UploadFile) => {
-	console.log(uploadFile)
-	deleteFileApi(UploadFileTypeEnum.PRODUCT, uploadFile.name).then((res) => {
+const handleRemove = (url: string) => {
+	let filename = url.substring(url.lastIndexOf('/') + 1)
+	deleteFileApi(UploadFileTypeEnum.PRODUCT, filename).then((res) => {
 		if (res) {
 			for (let index in fileList.value) {
-				if (uploadFile.name === fileList.value[index].name) {
+				if (filename === fileList.value[index].name) {
 					fileList.value.splice(parseInt(index), 1)
 				}
 			}
@@ -286,13 +283,15 @@ const addProduct = (): void => {
 					<el-col :span='14'>
 						<div class='form-row'>
 							<el-form-item label='商品图片'>
+								<div class='upload-img'>
+									<upload-image v-for='(item, index) in fileList' :url='item.url' :key='index' @remove='handleRemove' />
+								</div>
 								<el-upload
+												v-if='fileList.length < 8'
 												action='#'
 												list-type='picture-card'
-												v-model:file-list='fileList'
-												:limit='8'
+												:show-file-list='false'
 												:http-request='uploadFile'
-												:on-remove='handleRemove'
 								>
 									<el-icon>
 										<Plus />
@@ -326,7 +325,7 @@ const addProduct = (): void => {
 					<span>商品规格</span>
 					<el-link type='primary' @click='addSpecs' class='sku-spec-add'>添加规格</el-link>
 				</div>
-
+				<!--sku列表-->
 				<div class='sku-container' v-for='(attr, index) in attrItem' :key='index'>
 					<div class='sku-content'>
 						<div class='sku-content-box'>
@@ -483,5 +482,9 @@ const addProduct = (): void => {
 
 .sku-content-box .sku-content-left {
 	flex: 1;
+}
+
+.upload-img {
+	padding-top: 10px;
 }
 </style>

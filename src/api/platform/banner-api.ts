@@ -3,13 +3,19 @@ import request from '@/request'
 import { Banner } from '@/interface/platform'
 
 // 获取轮播图分页信息接口
-const getBannerPagesApi = (pageNum: number = 1, pageSize: number = 5): Promise<AxiosResponse> => {
+const getBannerPagesApi = (
+    pageNum: number = 1,
+    pageSize: number = 5,
+    type: number | undefined = undefined,
+    page: string | undefined = undefined): Promise<AxiosResponse> => {
     return request({
         url: '/admin/platform/banner/pages',
         method: 'GET',
         params: {
             page_num: pageNum,
-            page_size: pageSize
+            page_size: pageSize,
+            type: type,
+            page: page
         }
     }, true)
 }

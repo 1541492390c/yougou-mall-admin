@@ -1,30 +1,32 @@
 <script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { Order } from '@/interface/order'
 import { getOrderPagesApi, updateOrderStateApi } from '@/api/order/order-api'
 import Pagination from '@/components/pagination/Pagination.vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, FormInstance } from 'element-plus'
 
+const isSearch = ref<boolean>(false)
+const searchForm = ref<FormInstance>()
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(5)
 const tableData = ref<Array<Order>>([])
+const orderStateOptions = ref<Array<any>>([
+	{value: undefined, label: '全部'},
+	{value: 0, label: '已取消'},
+	{value: 1, label: '待付款'},
+	{value: 2, label: '待发货'},
+	{value: 3, label: '配送中'},
+	{value: 4, label: '已完成'},
+])
+const searchData = reactive<Record<string, any>>({
+	orderNo: '',
+	state: undefined
+})
 
 onMounted(() => {
 	getTableData()
 })
-
-// 获取表格信息
-const getTableData = (): void => {
-	getOrderPagesApi(currentPage.value, currentSize.value).then((res) => {
-		if (res) {
-			tableData.value = res.data.list
-			total.value = res.data.total
-		}
-	}).catch((err) => {
-		console.log(err)
-	})
-}
 
 // 解析规格
 const transformSpecs = computed(() => (value: string): string => {
@@ -54,13 +56,51 @@ const transformOrderState = computed(() => (value: number): string => {
 	}
 })
 
+// 获取表格信息
+const getTableData = (): void => {
+	getOrderPagesApi(currentPage.value, currentSize.value).then((res) => {
+		if (res) {
+			tableData.value = res.data.list
+			total.value = res.data.total
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+const search = (): void => {
+	getOrderPagesApi(currentPage.value, currentSize.value, searchData.state, searchData.orderNo).then((res) => {
+		if (res) {
+			tableData.value = res.data.list
+			total.value = res.data.total
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+const handleSearch = (): void => {
+	isSearch.value = true
+	currentPage.value = 1
+	search()
+}
+
+// 重置
+const handleReset = (): void => {
+	isSearch.value = false
+	currentPage.value = 1
+	searchForm.value?.resetFields()
+	getTableData()
+}
+
 const currentPageChange = (value: number): void => {
 	currentPage.value = value
-	getTableData()
+	isSearch.value ? search() : getTableData()
 }
 
 // 更新订单状态
 const updateOrderState = (orderId: number, index: number): void => {
+	console.log(orderId)
 	updateOrderStateApi(orderId, 3).then((res) => {
 		if (res) {
 			ElMessage.success('发货成功')
@@ -79,6 +119,24 @@ const updateOrderState = (orderId: number, index: number): void => {
 
 <template>
 	<div class='card'>
+		<!--搜索栏-->
+		<el-form ref='searchForm' :model='searchData' inline class='search-form'>
+			<!--订单号-->
+			<el-form-item label='订单号:' prop='orderNo'>
+				<el-input v-model='searchData.orderNo' placeholder='请输入订单号' />
+			</el-form-item>
+			<!--订单状态-->
+			<el-form-item label='订单状态:' prop='state'>
+				<el-select v-model='searchData.state' placeholder='请选择订单状态'>
+					<el-option v-for='(item, index) in orderStateOptions' :value='item.value' :label='item.label' :key='index' />
+				</el-select>
+			</el-form-item>
+			<el-form-item>
+				<el-button @click='handleReset'>重置</el-button>
+				<el-button @click='handleSearch' type='primary'>搜索</el-button>
+			</el-form-item>
+		</el-form>
+		<!--表格数据-->
 		<el-table :data='tableData'>
 			<template #empty>
 				<el-empty description='暂无数据' />
@@ -128,7 +186,7 @@ const updateOrderState = (orderId: number, index: number): void => {
 			</el-table-column>
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
-					<el-button @click='updateOrderState' v-if='scope.row.state === 2' type='danger' link>发货</el-button>
+					<el-button @click='updateOrderState(scope.row.orderId, scope.$index)' v-if='scope.row.state === 2' type='danger' link>发货</el-button>
 					<el-button v-if='scope.row.state === 3' type='info' link disabled>已发货,待客户接收</el-button>
 					<el-button v-if='scope.row.state === 4' type='success' link disabled>该订单已完成</el-button>
 				</template>

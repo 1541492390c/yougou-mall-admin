@@ -12,13 +12,21 @@ const saveCouponApi = (value: Coupon): Promise<AxiosResponse> => {
 }
 
 // 获取优惠券分页信息
-const getCouponPagesApi = (pageNum: number = 1, pageSize: number = 10): Promise<AxiosResponse> => {
+const getCouponPagesApi = (
+    pageNum: number = 1,
+    pageSize: number = 10,
+    quota: number | undefined = undefined,
+    expired: number | undefined = undefined,
+    categoryNode: string | undefined = undefined): Promise<AxiosResponse> => {
     return request({
         url: '/admin/payment/coupon/pages',
         method: 'GET',
         params: {
             page_num: pageNum,
-            page_size: pageSize
+            page_size: pageSize,
+            quota: quota,
+            expired: expired,
+            category_node: categoryNode
         }
     }, true)
 }

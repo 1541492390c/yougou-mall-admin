@@ -12,6 +12,8 @@ const categoryOptions = ref<Array<number>>([])
 const formData = reactive<Record<string, any>>({
 	expired: 1,
 	quota: 0,
+	usedAmount: 0,
+	discountAmount: 0,
 	categoryNode: '',
 	description: ''
 })
@@ -40,7 +42,7 @@ const handleSelect = (value: Array<number>): void => {
 // 添加优惠券
 const addCoupon = (form: FormInstance | undefined): void => {
 	form?.validate((valid) => {
-		if (valid) {
+		if (!valid) {
 			return
 		}
 		saveCouponApi(formData as Coupon).then((res) => {
@@ -68,14 +70,34 @@ const addCoupon = (form: FormInstance | undefined): void => {
 							<el-form-item label='优惠券类型' prop='categoryNode' required style='width: 100%'>
 								<el-cascader :model-value='categoryOptions' :options='categoryList'
 														 @change='(value: Array<number>) => handleSelect(value)'
-														 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择' style='width: 100%' />
+														 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择分类'
+														 style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>
 					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='过期天数' prop='expired' required style='width: 100%'>
-								<el-input-number v-model='formData.expired' :min='1' :max='10' placeholder='请输入过期天数' style='width: 100%' />
+								<el-input-number v-model='formData.expired' :min='1' :max='10' placeholder='请输入过期天数'
+																 style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span='10'>
+						<div class='form-row'>
+							<el-form-item label='使用金额' prop='usedAmount' required style='width: 100%'>
+								<el-input-number v-model='formData.usedAmount' :min='0' placeholder='请输入使用金额'
+																 style='width: 100%' />
+							</el-form-item>
+						</div>
+					</el-col>
+					<el-col :span='10'>
+						<div class='form-row'>
+							<el-form-item label='抵扣金额' prop='discountAmount' required style='width: 100%'>
+								<el-input-number v-model='formData.discountAmount' :min='0' placeholder='请输入抵扣金额'
+																 style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>

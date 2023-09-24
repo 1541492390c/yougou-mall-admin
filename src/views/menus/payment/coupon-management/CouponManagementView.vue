@@ -6,8 +6,10 @@ import { BrandTable, CouponTable } from '@/interface/extension'
 import { Coupon } from '@/interface/payment'
 import { Category } from '@/interface/product'
 import { getCategoryListApi } from '@/api/product/category-api'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 
+const isSearch = ref<boolean>(false)
+const searchForm = ref<FormInstance>()
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(10)
@@ -15,8 +17,9 @@ const categoryList = ref<Array<Category>>([])
 const tableData = ref<Array<CouponTable>>([])
 const searchData = reactive<Record<string, any>>({
 	categoryNode: '',
-	quota: 0,
-	expired: 1
+	quota: undefined,
+	expired: undefined,
+	searchOptions: []
 })
 
 onMounted(() => {
@@ -28,6 +31,28 @@ const getTableData = (): void => {
 	getCouponPagesApi(currentPage.value, currentSize.value).then((res) => {
 		if (res) {
 			total.value = res.data.total
+			tableData.value = []
+
+			res.data.list.forEach((item: Coupon) => {
+				// 创建品牌展示数据
+				let data: CouponTable = {
+					...item,
+					options: []
+				}
+				data.options = item.categoryNode.split('-').map(Number)
+				tableData.value.push(data)
+			})
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+const search = (): void => {
+	getCouponPagesApi(currentPage.value, currentSize.value, searchData.quota, searchData.expired, searchData.categoryNode).then((res) => {
+		if (res) {
+			total.value = res.data.total
+			tableData.value = []
 
 			res.data.list.forEach((item: Coupon) => {
 				// 创建品牌展示数据
@@ -62,8 +87,29 @@ const handleSelect = (value: Array<number>, item: BrandTable): void => {
 	item.categoryNode = value.join('-')
 }
 
+const handleSelectSearchCategory = (value: Array<number>): void => {
+	searchData.categoryNode = value.join('-')
+}
+
+// 搜索
+const handleSearch = (): void => {
+	isSearch.value = true
+	currentPage.value = 1
+	search()
+}
+
+// 重置
+const handleReset = (): void => {
+	isSearch.value = false
+	currentPage.value = 1
+	searchData.searchOptions = []
+	searchForm.value?.resetFields()
+	getTableData()
+}
+
 const currentPageChange = (value: number): void => {
-	console.log(value)
+	currentPage.value = value
+	isSearch.value ? search() : getTableData()
 }
 
 // 更新优惠券
@@ -96,23 +142,24 @@ const deleteCoupon = (value: number, index: number): void => {
 <template>
 	<div class='card'>
 		<!--搜索栏-->
-		<el-form :model='searchData' inline class='search-form'>
+		<el-form ref='searchForm' :model='searchData' inline class='search-form'>
 			<!--分类-->
-			<el-form-item label='分类:'>
-				<el-cascader :options='categoryList' :props="{value: 'categoryId', label: 'name', checkStrictly: true}"
-										 placeholder='请选择' style='width: 300px' />
+			<el-form-item label='分类:' prop='categoryNode'>
+				<el-cascader :model-value='searchData.searchOptions' :options='categoryList'
+										 :props="{value: 'categoryId', label: 'name', checkStrictly: true}"
+										 @change='handleSelectSearchCategory' placeholder='请选择分类' style='width: 300px' />
 			</el-form-item>
 			<!--配额-->
-			<el-form-item label='配额:'>
-				<el-input-number v-model='searchData.quota' :min='0' placeholder='请输入配额' />
+			<el-form-item label='配额:' prop='quota'>
+				<el-input-number v-model='searchData.quota' :min='0' placeholder='请输入配额' style='width: 200px' />
 			</el-form-item>
 			<!--过期天数-->
-			<el-form-item label='过期天数:'>
-				<el-input-number v-model='searchData.expired' :min='1' :max='10' placeholder='请输入过期天数' />
+			<el-form-item label='过期天数:' prop='expired'>
+				<el-input-number v-model='searchData.expired' :min='1' :max='10' placeholder='请输入过期天数' style='width: 200px' />
 			</el-form-item>
 			<el-form-item>
-				<el-button>重置</el-button>
-				<el-button type='primary'>搜索</el-button>
+				<el-button @click='handleReset'>重置</el-button>
+				<el-button @click='handleSearch' type='primary'>搜索</el-button>
 			</el-form-item>
 		</el-form>
 		<!--表格数据-->
@@ -133,11 +180,12 @@ const deleteCoupon = (value: number, index: number): void => {
 				</template>
 			</el-table-column>
 			<!--分类-->
-			<el-table-column label='分类' align='center'>
+			<el-table-column label='分类' align='center' width='350'>
 				<template #default='scope'>
 					<el-cascader :model-value='scope.row.options' :options='categoryList'
 											 @change='(value: Array<number>) => handleSelect(value, scope.row)'
-											 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择' />
+											 :props="{value: 'categoryId', label: 'name', checkStrictly: true}" placeholder='请选择'
+											 style='width: 300px' />
 				</template>
 			</el-table-column>
 			<!--简介-->

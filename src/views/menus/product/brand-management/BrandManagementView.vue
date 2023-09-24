@@ -4,11 +4,13 @@ import { Brand } from '@/interface/product'
 import { deleteBrandApi, getBrandPagesApi, updateBrandApi } from '@/api/product/brand-api'
 import Pagination from '@/components/pagination/Pagination.vue'
 import { BrandTable } from '@/interface/extension'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 import defaultImage from '@/assets/img/default-image.png'
 import { useStore } from 'vuex'
 
 const store = useStore()
+const searchForm = ref<FormInstance>()
+const isSearch = ref<boolean>(false)
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(10)
@@ -24,7 +26,28 @@ onMounted(() => {
 })
 
 const getTableData = (): void => {
-	getBrandPagesApi(currentPage.value).then((res) => {
+	getBrandPagesApi(currentPage.value, currentSize.value).then((res) => {
+		if (res) {
+			total.value = res.data.total
+			tableData.value = []
+
+			res.data.list.forEach((item: Brand) => {
+				// 创建品牌展示数据
+				let data: BrandTable = {
+					...item,
+					options: []
+				}
+				data.options = item.categoryNode.split('-').map(Number)
+				tableData.value.push(data)
+			})
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+const search = (): void => {
+	getBrandPagesApi(currentPage.value, currentSize.value, searchData.categoryNode, searchData.name).then((res) => {
 		if (res) {
 			total.value = res.data.total
 			tableData.value = []
@@ -49,9 +72,29 @@ const handleSelect = (value: Array<number>, item: BrandTable): void => {
 	item.categoryNode = value.join('-')
 }
 
+const handleSelectSearchCategory = (value: Array<number>): void => {
+	searchData.categoryNode = value.join('-')
+}
+
+// 搜索
+const handleSearch = (): void => {
+	isSearch.value = true
+	currentPage.value = 1
+	search()
+}
+
+// 重置
+const handleReset = (): void => {
+	isSearch.value = false
+	currentPage.value = 1
+	searchData.searchOptions = []
+	searchForm.value?.resetFields()
+	getTableData()
+}
+
 const currentPageChange = (value: number): void => {
 	currentPage.value = value
-	getTableData()
+	isSearch.value ? search() : getTableData()
 }
 
 // 更新品牌信息
@@ -86,19 +129,20 @@ const deleteBrand = (value: number, index: number): void => {
 <template>
 	<div class='card'>
 		<!--搜索栏-->
-		<el-form :model='searchData' inline class='search-form'>
+		<el-form ref='searchForm' :model='searchData' inline class='search-form'>
 			<!--分类-->
-			<el-form-item label='分类:'>
+			<el-form-item label='分类:' prop='categoryNode'>
 				<el-cascader :model-value='searchData.searchOptions' :options='store.state.categoryList'
+										 @change='handleSelectSearchCategory'
 										 :props="{value: 'categoryId', label: 'name'}" placeholder='请选择分类' style='width: 300px' />
 			</el-form-item>
 			<!--名称-->
-			<el-form-item label='名称:'>
+			<el-form-item label='名称:' prop='name'>
 				<el-input v-model='searchData.name' placeholder='请输入名称' />
 			</el-form-item>
 			<el-form-item>
-				<el-button>重置</el-button>
-				<el-button type='primary'>搜索</el-button>
+				<el-button @click='handleReset'>重置</el-button>
+				<el-button @click='handleSearch' type='primary'>搜索</el-button>
 			</el-form-item>
 		</el-form>
 		<!--表格数据-->

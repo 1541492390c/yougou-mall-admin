@@ -3,7 +3,13 @@ import request from '@/request'
 import { Product } from '@/interface/product'
 
 // 获取商品分页信息接口
-const getProductPagesApi = (pageNum: number = 1, pageSize: number = 10, isDiscount: boolean | undefined, recommended: boolean | undefined, categoryNode: string | undefined): Promise<AxiosResponse> => {
+const getProductPagesApi = (
+    pageNum: number = 1,
+    pageSize: number = 10,
+    isDiscount: boolean | undefined = undefined,
+    recommended: boolean | undefined = undefined,
+    name: string | undefined = undefined,
+    categoryNode: string | undefined = undefined): Promise<AxiosResponse> => {
     return request({
         url: '/product/pages',
         method: 'GET',
@@ -12,6 +18,7 @@ const getProductPagesApi = (pageNum: number = 1, pageSize: number = 10, isDiscou
             page_size: pageSize,
             is_discount: isDiscount,
             recommended: recommended,
+            name: name,
             category_node: categoryNode
         }
     })

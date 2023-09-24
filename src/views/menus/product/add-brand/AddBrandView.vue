@@ -3,11 +3,16 @@ import { reactive, ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useStore } from 'vuex'
 import { saveBrandApi } from '@/api/product/brand-api'
-import { ElMessage, FormInstance } from 'element-plus'
+import { ElMessage, FormInstance, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { Brand } from '@/interface/product'
+import { UploadFileTypeEnum } from '@/enums'
+import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
+import UploadImage from '@/components/upload-img/UploadImage.vue'
 
 const store = useStore()
 const form = ref<FormInstance>()
+const fileList = ref<Array<UploadUserFile>>([])
+const categoryOptions = ref<Array<number>>([])
 const formData = reactive<Record<string, any>>({
 	categoryNode: '',
 	name: '',
@@ -17,11 +22,38 @@ const formData = reactive<Record<string, any>>({
 
 // 选择分类
 const handleSelectCategory = (value: Array<number>): void => {
-	let categoryNode: string = ''
-	for (let index in value) {
-		categoryNode += value[index] + '-'
-	}
-	formData.categoryNode = categoryNode.substring(0, categoryNode.lastIndexOf('-'))
+	formData.categoryNode = value.join('-')
+}
+
+// 上传图片
+const uploadFile = (option: UploadRequestOptions): void => {
+	let fileData: FormData = new FormData()
+	fileData.append('resourceType', UploadFileTypeEnum.BRAND.toString())
+	fileData.append('file', option.file)
+	uploadFileApi(fileData).then((res) => {
+		if (res) {
+			formData.img = res.data
+			// 添加文件列表
+			let fileName: string = res.data.substring(res.data.lastIndexOf('/') + 1, res.data.length)
+			fileList.value.push({name: fileName, url: res.data})
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+// 移除图片
+const handleRemove = (url: string) => {
+	let filename = url.substring(url.lastIndexOf('/') + 1)
+	deleteFileApi(UploadFileTypeEnum.BRAND, filename).then((res) => {
+		if (res) {
+			formData.img = ''
+			fileList.value.splice(0, 1)
+			ElMessage.success('移除图片成功')
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
 }
 
 // 添加品牌
@@ -34,6 +66,7 @@ const addBrand = (form: FormInstance | undefined): void => {
 			if (res) {
 				ElMessage.success('添加成功')
 				form?.resetFields()
+				categoryOptions.value = []
 			}
 		}).catch((err) => {
 			console.log(err)
@@ -53,9 +86,9 @@ const addBrand = (form: FormInstance | undefined): void => {
 					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='品牌分类' prop='categoryNode' required style='width: 100%'>
-								<el-cascader :options='store.getters.categoryList' :props="{label: 'name', value: 'categoryId'}"
-														 placeholder='请选择分类'
-														 @change='handleSelectCategory' style='width: 100%' />
+								<el-cascader v-model='categoryOptions' :options='store.getters.categoryList'
+														 :props="{label: 'name', value: 'categoryId'}"
+														 @change='handleSelectCategory' placeholder='请选择分类' style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>
@@ -80,9 +113,15 @@ const addBrand = (form: FormInstance | undefined): void => {
 					<el-col :span='14'>
 						<div class='form-row'>
 							<el-form-item label='品牌logo' prop='img' style='width: 100%'>
+								<div class='upload-img'>
+									<upload-image v-for='(item, index) in fileList' :url='item.url' :key='index' @remove='handleRemove' />
+								</div>
 								<el-upload
+												v-if='fileList.length === 0'
 												action='#'
 												list-type='picture-card'
+												:show-file-list='false'
+												:http-request='uploadFile'
 								>
 									<el-icon>
 										<Plus />
@@ -113,5 +152,9 @@ const addBrand = (form: FormInstance | undefined): void => {
 	width: 100%;
 	display: flex;
 	justify-content: center;
+}
+
+.upload-img {
+	padding-top: 10px;
 }
 </style>

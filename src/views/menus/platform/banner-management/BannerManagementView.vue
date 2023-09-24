@@ -2,20 +2,24 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Banner } from '@/interface/platform'
 import { deleteBannerApi, getBannerPagesApi, updateBannerApi } from '@/api/platform/banner-api'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 
+const isSearch = ref<boolean>(false)
+const searchForm = ref<FormInstance>()
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(5)
 const typeOptions = ref<Array<any>>([
+	{value: undefined, label: '全部'},
 	{value: 1, label: 'PC端'},
 	{value: 2, label: '移动端'},
 	{value: 3, label: '小程序端'}
 ])
 const tableData = ref<Array<Banner>>([])
 const searchData = reactive<Record<string, any>>({
-	type: 1,
-	page: ''
+	type: undefined,
+	page: '',
+	link: ''
 })
 
 onMounted(() => {
@@ -34,9 +38,36 @@ const getTableData = (): void => {
 	})
 }
 
+// 获取轮播图分页信息
+const search = (): void => {
+	getBannerPagesApi(currentPage.value, currentSize.value, searchData.type, searchData.page).then((res) => {
+		if (res) {
+			tableData.value = res.data.list
+			total.value = res.data.total
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
+// 搜索
+const handleSearch = (): void => {
+	isSearch.value = true
+	currentPage.value = 1
+	search()
+}
+
+// 重置
+const handleReset = (): void => {
+	isSearch.value = false
+	currentPage.value = 1
+	searchForm.value?.resetFields()
+	getTableData()
+}
+
 const currentPageChange = (value: number): void => {
 	currentPage.value = value
-	getTableData()
+	isSearch.value ? search() : getTableData()
 }
 
 // 更新轮播图
@@ -70,20 +101,24 @@ const deleteBanner = (value: number, index: number): void => {
 <template>
 	<div class='card'>
 		<!--搜索栏-->
-		<el-form :model='searchData' inline class='search-form'>
+		<el-form ref='searchForm' :model='searchData' inline class='search-form'>
 			<!--所属页面-->
 			<el-form-item label='所属页面:' prop='page'>
 				<el-input v-model='searchData.page' placeholder='请输入所属页面' />
 			</el-form-item>
+			<!--轮播图链接-->
+			<el-form-item label='轮播图页面:' prop='page'>
+				<el-input v-model='searchData.link' placeholder='请输入轮播图页面' />
+			</el-form-item>
 			<!--所属终端-->
-			<el-form-item label='所属终端:' prop='page'>
+			<el-form-item label='所属终端:' prop='type'>
 				<el-select v-model='searchData.type' placeholder='请选择所属终端'>
 					<el-option v-for='(item, index) in typeOptions' :value='item.value' :label='item.label' :key='index' />
 				</el-select>
 			</el-form-item>
 			<el-form-item>
-				<el-button>重置</el-button>
-				<el-button type='primary'>搜索</el-button>
+				<el-button @click='handleReset'>重置</el-button>
+				<el-button @click='handleSearch' type='primary'>搜索</el-button>
 			</el-form-item>
 		</el-form>
 		<!--表格数据-->

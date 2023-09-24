@@ -4,8 +4,10 @@ import { getUserPagesApi, updateUserStateApi } from '@/api/user/user-api'
 import { User } from '@/interface/user'
 import Pagination from '@/components/pagination/Pagination.vue'
 import defaultAvatar from '@/assets/img/default-avatar.png'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 
+const searchForm = ref<FormInstance>()
+const isSearch = ref<boolean>(false)
 const total = ref<number>(0)
 const currentPage = ref<number>(1)
 const currentSize = ref<number>(10)
@@ -51,7 +53,7 @@ const state = computed(() => (value: number) => {
 })
 
 const getTableData = (): void => {
-	getUserPagesApi(currentPage.value, currentSize.value, searchData.state, searchData.gender, searchData.nickname).then((res) => {
+	getUserPagesApi(currentPage.value, currentSize.value).then((res) => {
 		if (res) {
 			tableData.value = res.data.list
 			total.value = res.data.total
@@ -62,22 +64,42 @@ const getTableData = (): void => {
 }
 
 const search = (): void => {
-	// 搜索从第一页开始查询
-	currentPage.value = 1
-	getTableData()
+	getUserPagesApi(currentPage.value, currentSize.value, searchData.state, searchData.gender, searchData.nickname).then((res) => {
+		if (res) {
+			tableData.value = res.data.list
+			total.value = res.data.total
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
 }
 
 const currentPageChange = (value: number): void => {
 	currentPage.value = value
+	isSearch.value ? search() : getTableData()
+}
+
+// 搜索
+const handleSearch = (): void => {
+	isSearch.value = true
+	currentPage.value = 1
+	search()
+}
+
+// 重置
+const handleReset = (): void => {
+	isSearch.value = false
+	currentPage.value = 1
+	searchForm.value?.resetFields()
 	getTableData()
 }
 
 // 更新用户状态
 const updateUserState = (userId: number, state: number): void => {
-	ElMessageBox.confirm('此操作将删除商品,是否继续?', '删除商品').then(() => {
+	ElMessageBox.confirm('此操作将更新该用户状态,是否继续?', '更新用户状态').then(() => {
 		updateUserStateApi(userId, state).then((res) => {
 			if (res) {
-				ElMessage.success('修改成功')
+				ElMessage.success('操作成功')
 			}
 		}).catch((err) => {
 			console.log(err)
@@ -91,7 +113,7 @@ const updateUserState = (userId: number, state: number): void => {
 <template>
 	<div class='card'>
 		<!--搜索栏-->
-		<el-form :model='searchData' inline class='search-form'>
+		<el-form ref='searchForm' :model='searchData' inline class='search-form'>
 			<!--昵称-->
 			<el-form-item label='昵称:' prop='nickname'>
 				<el-input v-model='searchData.nickname' placeholder='请输入昵称' />
@@ -110,8 +132,8 @@ const updateUserState = (userId: number, state: number): void => {
 			</el-form-item>
 			<el-form-item>
 				<div>
-					<el-button>重置</el-button>
-					<el-button @click='search' type='primary'>搜索</el-button>
+					<el-button @click='handleReset'>重置</el-button>
+					<el-button @click='handleSearch' type='primary'>搜索</el-button>
 				</div>
 			</el-form-item>
 		</el-form>
