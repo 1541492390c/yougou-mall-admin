@@ -11,6 +11,14 @@ const saveBrandApi = (value: Brand): Promise<AxiosResponse> => {
     }, true)
 }
 
+// 获取品牌列表接口
+const getBrandListApi = (): Promise<AxiosResponse> => {
+    return request({
+        url: '/product/brand/list',
+        method: 'GET'
+    })
+}
+
 // 搜索品牌列表接口
 const getBrandPagesApi = (
     pageNum: number = 1,
@@ -43,8 +51,8 @@ const deleteBrandApi = (value: number): Promise<AxiosResponse> => {
     return request({
         url: '/admin/product/brand/delete',
         method: 'DELETE',
-        params: { brand_id: value }
+        params: {brand_id: value}
     }, true)
 }
 
-export { saveBrandApi, getBrandPagesApi, updateBrandApi, deleteBrandApi }
+export { saveBrandApi, getBrandListApi, getBrandPagesApi, updateBrandApi, deleteBrandApi }

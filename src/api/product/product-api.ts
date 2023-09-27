@@ -24,6 +24,15 @@ const getProductPagesApi = (
     })
 }
 
+// 保存商品接口
+const saveProductApi = (value: any): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/product/save',
+        method: 'POST',
+        data: value
+    }, true)
+}
+
 // 更新商品信息接口
 const updateProductApi = (value: Product): Promise<AxiosResponse> => {
     return request({
@@ -42,4 +51,4 @@ const deleteProductApi = (value: number): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getProductPagesApi, updateProductApi, deleteProductApi }
+export { getProductPagesApi, saveProductApi, updateProductApi, deleteProductApi }

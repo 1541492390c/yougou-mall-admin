@@ -1,25 +1,27 @@
 <script setup lang='ts'>
-import { computed, h, reactive, ref, VNode, watch } from 'vue'
-import { AttrValue } from '@/interface/product'
+import { computed, h, onMounted, reactive, ref, VNode, watch } from 'vue'
+import { AttrValue, Brand, Sku } from '@/interface/product'
 import { FormInstance, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
 import { UploadFileTypeEnum } from '@/enums'
 import { isEmpty } from '@/utils'
 import { useStore } from 'vuex'
-import UploadImage from '@/components/upload-img/UploadImage.vue'
+import UploadImage from '@/components/upload-image/UploadImage.vue'
+import { getBrandListApi } from '@/api/product/brand-api'
+import { saveProductApi } from '@/api/product/product-api'
 
 const store = useStore()
 const form = ref<FormInstance>()
+const brandList = ref<Array<Brand>>([])
 const fileList = ref<Array<UploadUserFile>>([])
-
 const tableColumnList = ref<any>({
 	tableHeaderList: [],
 	tableBodyList: []
 })
 const attrItem = ref<any>([
 	{
-		attrName: '', //规格名
+		name: '', //规格名
 		attrValueList: [], //规格值数组
 		inputVisible: false,
 		inputValue: ''
@@ -35,15 +37,19 @@ const formData = reactive<Record<string, any>>({
 	categoryNode: ''
 })
 
+onMounted(() => {
+	getBrandList()
+})
+
 // 计算规格
 const calculateAttr = computed(() => {
 	// 初始化
 	let obj = Object.create({})
 	attrItem.value.forEach((item: any) => {
 		// 判断有没有输入规格名
-		if (item.attrName) {
-			//规格名:规格值     //'颜色':'尺寸'
-			obj[item.attrName] = item.attrValueList
+		if (item.name) {
+			//规格名:规格值     //['颜色':'尺寸']
+			obj[item.name] = item.attrValueList
 		}
 	})
 	return obj
@@ -101,6 +107,17 @@ watch(calculateAttr, (newValue) => {
 		tableColumnList.value.tableBodyList = []
 	}
 }, {deep: true})
+
+// 获取品牌列表
+const getBrandList = (): void => {
+	getBrandListApi().then((res) => {
+		if (res) {
+			brandList.value = res.data
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
+}
 
 // 选择分类
 const handleSelectCategory = (value: Array<number>): void => {
@@ -214,27 +231,56 @@ const handleRemove = (url: string) => {
 }
 
 // 添加商品
-const addProduct = (): void => {
-	let sku: Array<any> = []
-	for (let index in tableColumnList.value.tableBodyList) {
-		let obj: any = tableColumnList.value.tableBodyList[index]
-		// 规格
-		let specsObj: any = Object.create({})
-		// 获取键值
-		let keys: Array<string> = Object.keys(obj)
-		for (let key in keys) {
-			if (keys[key] === 'price' || keys[key] === 'description' || keys[key] === 'skuStock') {
-				continue
-			}
-			specsObj[keys[key]] = obj[keys[key]]
+const addProduct = (form: FormInstance | undefined): void => {
+	form?.validate((valid) => {
+		if (!valid) {
+			return
 		}
-		// 转为字符串格式
-		let specsStr: string = JSON.stringify(specsObj)
-		sku.push(specsStr)
-	}
-	console.log(formData)
-	console.log(sku)
-	console.log(attrItem.value)
+		let skuList: Array<any> = []
+		for (let index in tableColumnList.value.tableBodyList) {
+			let obj: any = tableColumnList.value.tableBodyList[index]
+			// 规格
+			let specsObj: any = Object.create({})
+			// 获取键值
+			let keys: Array<string> = Object.keys(obj)
+			for (let key in keys) {
+				if (keys[key] === 'price' || keys[key] === 'description' || keys[key] === 'skuStock') {
+					continue
+				}
+				specsObj[keys[key]] = obj[keys[key]]
+			}
+			// 转为字符串格式
+			let specsStr: string = JSON.stringify(specsObj)
+			// 新增sku
+			let sku: Sku = {
+				skuStock: obj.skuStock,
+				price: obj.price,
+				discountPrice: obj.discountPrice,
+				description: obj.description,
+				skuSpecs: specsStr
+			}
+			// 是否折扣
+			if (!!formData.isDiscount) {
+				sku.discountPrice = sku.price * (formData.discount * 0.1)
+			}
+			skuList.push(sku)
+		}
+		console.log(formData)
+		console.log(skuList)
+		console.log(attrItem.value)
+
+		// 构建新增数据
+		let value: any = {...formData}
+		value.skuList = skuList
+		value.attrList = attrItem.value
+		// 保存
+		saveProductApi(value).then((res) => {
+			if (res) {
+			}
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
 }
 </script>
 
@@ -250,15 +296,22 @@ const addProduct = (): void => {
 					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='商品分类' prop='categoryNode' required style='width: 100%'>
-								<el-cascader :options='store.state.categoryList' :props="{label: 'name', value: 'categoryId'}" placeholder='请选择分类'
-														 @change='handleSelectCategory' style='width: 100%' />
+								<el-cascader :options='store.state.categoryList' :props="{label: 'name', value: 'categoryId'}"
+														 placeholder='请选择分类' @change='handleSelectCategory' style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>
 					<el-col :span='10'>
 						<div class='form-row'>
 							<el-form-item label='所属品牌(选填)' prop='brandId' style='width: 100%'>
-								<el-select v-model='formData.brandId' placeholder='请选择品牌' style='width: 100%'></el-select>
+								<el-select v-model='formData.brandId' placeholder='请选择品牌' style='width: 100%'>
+									<el-option v-for='(item, index) in brandList' :value='item.brandId' :label='item.name' :key='index' style='height: 100%'>
+										<div class='brand-option'>
+											<img :src='item.img' alt='' />
+											<span>{{item.name}}</span>
+										</div>
+									</el-option>
+								</el-select>
 							</el-form-item>
 						</div>
 					</el-col>
@@ -274,7 +327,8 @@ const addProduct = (): void => {
 					<el-col v-if='formData.isDiscount' :span='10'>
 						<div class='form-row'>
 							<el-form-item label='商品折扣' prop='discount' style='width: 100%'>
-								<el-input-number v-model='formData.discount' placeholder='请输入商品折扣' :min='1' :max='9' style='width: 100%' />
+								<el-input-number v-model='formData.discount' placeholder='请输入商品折扣' :min='1' :max='9'
+																 style='width: 100%' />
 							</el-form-item>
 						</div>
 					</el-col>
@@ -332,7 +386,7 @@ const addProduct = (): void => {
 							<div class='sku-content-left'>
 								<el-form label-width='80px' style='width:400px'>
 									<el-form-item label='规格名'>
-										<el-input v-model='attr.attrName' placeholder='请输入规格名'></el-input>
+										<el-input v-model='attr.name' placeholder='请输入规格名'></el-input>
 									</el-form-item>
 									<el-form-item label='规格值'>
 										<el-tag v-for='item in attr.attrValueList' :key='item' closable :disable-transitions='false'
@@ -395,7 +449,7 @@ const addProduct = (): void => {
 			</div>
 			<el-row>
 				<div class='add-button'>
-					<el-button @click='addProduct' type='primary'>确认添加</el-button>
+					<el-button @click='addProduct(form)' type='primary'>确认添加</el-button>
 				</div>
 			</el-row>
 		</div>
@@ -486,5 +540,18 @@ const addProduct = (): void => {
 
 .upload-img {
 	padding-top: 10px;
+}
+
+.brand-option {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+
+	img {
+		width: 60px;
+		height: 60px;
+		margin: 10px;
+	}
 }
 </style>

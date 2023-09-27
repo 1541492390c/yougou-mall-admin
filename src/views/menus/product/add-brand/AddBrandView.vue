@@ -7,7 +7,7 @@ import { ElMessage, FormInstance, UploadRequestOptions, UploadUserFile } from 'e
 import { Brand } from '@/interface/product'
 import { UploadFileTypeEnum } from '@/enums'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
-import UploadImage from '@/components/upload-img/UploadImage.vue'
+import UploadImage from '@/components/upload-image/UploadImage.vue'
 
 const store = useStore()
 const form = ref<FormInstance>()

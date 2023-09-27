@@ -48,23 +48,17 @@ interface Attr {
     attrValueList?: Array<AttrValue>
 }
 
-// 商品sku规格
-interface SkuSpecs {
-    attrName: string,
-    attrValueName: string
-}
-
 // 商品sku
 interface Sku {
-    skuId: number,
-    productId: string,
+    skuId?: number,
+    productId?: number,
     skuStock: number,
     price: number,
-    discount: number,
+    discount?: number,
     discountPrice: number,
     description: string,
-    isDiscount: boolean,
-    skuSpecs: Array<SkuSpecs>
+    isDiscount?: boolean,
+    skuSpecs: string
 }
 
 // 秒杀活动场次
@@ -75,4 +69,4 @@ interface SecKill {
     endTime: string
 }
 
-export type { Brand, Product, Category, Attr, AttrValue, Sku, SkuSpecs, SecKill }
+export type { Brand, Product, Category, Attr, AttrValue, Sku, SecKill }

@@ -1,19 +1,23 @@
 <script setup lang='ts'>
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watchEffect } from 'vue'
 import { Edit, SwitchButton } from '@element-plus/icons-vue'
 import UpdatePasswordDialog from '@/components/dialog/update/UpdatePasswordDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { logoutApi } from '@/api/auth/auth-api'
-import { useRouter } from 'vue-router'
+import { RouteLocationMatched, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 const router = useRouter()
 const store = useStore()
 const components = defineComponent({ edit: Edit, switchButton: SwitchButton })
+const routeTitleList = ref<Array<string>>([])
 const showUpdatePassword = ref<boolean>(false)
 
-watch(router.currentRoute, (newValue) => {
-	console.log(newValue.matched)
+watchEffect(() => {
+	routeTitleList.value = []
+	router.currentRoute.value.matched.forEach((item: RouteLocationMatched) => {
+		routeTitleList.value.push(item.meta.title)
+	})
 })
 
 const showUpdatePasswordDialog = (): void => {
@@ -48,7 +52,10 @@ const logout = (): void => {
 	<div class='main'>
 		<div class='select-bar'>
 			<div class='select-bar-block'>
-				<el-dropdown>
+				<el-breadcrumb class='breadcrumb'>
+					<el-breadcrumb-item v-for='(item, index) in routeTitleList' :key='index'>{{item}}</el-breadcrumb-item>
+				</el-breadcrumb>
+				<el-dropdown class='dropdown'>
 					<span class='username'>您好,{{store.getters.userinfo.nickname}}</span>
 					<template #dropdown>
 						<el-dropdown-menu>
@@ -63,7 +70,7 @@ const logout = (): void => {
 				</el-dropdown>
 			</div>
 		</div>
-
+		<!--更新密码对话框-->
 		<update-password-dialog :show='showUpdatePassword' @close-dialog='closeUpdatePasswordDialog' />
 	</div>
 </template>
@@ -80,9 +87,28 @@ const logout = (): void => {
 }
 
 .select-bar-block {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
   font-size: 16px;
   padding: 20px;
   margin-right: 30px;
+}
+
+.breadcrumb {
+	width: 50%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	justify-items: center;
+}
+
+.dropdown {
+	width: 50%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	justify-items: center;
 }
 
 .username {
