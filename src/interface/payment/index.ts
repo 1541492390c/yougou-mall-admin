@@ -10,14 +10,4 @@ interface Coupon {
     description: string
 }
 
-// 用户优惠券信息
-interface CouponUser {
-    couponUserId: number,
-    couponId: string,
-    state: number,
-    receiveTime: Date,
-    expiredTime: Date,
-    coupon: Coupon
-}
-
-export type { Coupon, CouponUser }
+export type { Coupon }

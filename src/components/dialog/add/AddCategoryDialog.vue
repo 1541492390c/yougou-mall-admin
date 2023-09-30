@@ -58,20 +58,18 @@ const rules = reactive({
 </script>
 
 <template>
-	<div>
-		<el-dialog v-model='showDialog' :center='true' @close='closeDialog(false)' style='width: 600px' title='添加分类'>
-			<el-form ref='formRef' :model='formData' :rules='rules'>
-				<el-form-item label='分类名称' prop='name'>
-					<el-input v-model='formData.name' placeholder='请输入分类名称' />
-				</el-form-item>
-				<el-form-item>
-					<div class='add-button'>
-						<el-button @click='addCategory(formRef)' type='primary'>确认增加</el-button>
-					</div>
-				</el-form-item>
-			</el-form>
-		</el-dialog>
-	</div>
+	<el-dialog v-model='showDialog' :center='true' @close='closeDialog(false)' style='width: 600px' title='添加分类'>
+		<el-form ref='formRef' :model='formData' :rules='rules'>
+			<el-form-item label='分类名称' prop='name'>
+				<el-input v-model='formData.name' placeholder='请输入分类名称' />
+			</el-form-item>
+			<el-form-item>
+				<div class='add-button'>
+					<el-button @click='addCategory(formRef)' type='primary'>确认增加</el-button>
+				</div>
+			</el-form-item>
+		</el-form>
+	</el-dialog>
 </template>
 
 <style scoped lang='scss'>

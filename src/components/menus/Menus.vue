@@ -1,4 +1,3 @@
-<!--suppress ALL -->
 <script setup lang='ts'>
 import { onMounted, ref, watch } from 'vue'
 import { RouteRecordRaw, useRouter } from 'vue-router'
@@ -34,17 +33,16 @@ const getCurrentIndex = (): void => {
 				<!--展开菜单-->
 				<el-sub-menu v-if='item.children && item.children.length !== 0' :index='item.path'>
 					<template #title>
-						<span>{{item.meta.title}}</span>
+						<span>{{item.meta?.title}}</span>
 					</template>
 					<!--加载子路由-->
-					<el-menu-item v-for='(child, j) in item.children'
-												:key='j' :index="'/dashboard/' + item.path + '/' + child.path">
-						<span>{{child.meta.title}}</span>
+					<el-menu-item v-for='(child, j) in item.children' :key='j' :index="'/dashboard/' + item.path + '/' + child.path">
+						<span>{{child.meta?.title}}</span>
 					</el-menu-item>
 				</el-sub-menu>
 				<!--非展开菜单-->
 				<el-menu-item v-else :index="'/dashboard/' + item.path">
-					<span>{{item.meta.title}}</span>
+					<span>{{item.meta?.title}}</span>
 				</el-menu-item>
 			</template>
 		</el-menu>

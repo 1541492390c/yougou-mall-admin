@@ -1,12 +1,6 @@
 import { Brand, Product } from '@/interface/product'
 import { Coupon } from '@/interface/payment'
 
-// 行政区域选项
-interface District {
-    name: string,
-    districts: Array<District>
-}
-
 // 商品展示数据
 interface ProductTable extends Product {
     options: Array<number>
@@ -22,4 +16,4 @@ interface CouponTable extends Coupon {
     options: Array<number>
 }
 
-export type { District, ProductTable, BrandTable, CouponTable }
+export type { ProductTable, BrandTable, CouponTable }

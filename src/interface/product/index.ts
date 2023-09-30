@@ -40,14 +40,6 @@ interface AttrValue {
     name: string
 }
 
-// 商品属性
-interface Attr {
-    attrId?: number,
-    productId?: string,
-    name: string,
-    attrValueList?: Array<AttrValue>
-}
-
 // 商品sku
 interface Sku {
     skuId?: number,
@@ -61,12 +53,4 @@ interface Sku {
     skuSpecs: string
 }
 
-// 秒杀活动场次
-interface SecKill {
-    secKillId: number,
-    description: string,
-    startTime: string,
-    endTime: string
-}
-
-export type { Brand, Product, Category, Attr, AttrValue, Sku, SecKill }
+export type { Brand, Product, Category, AttrValue, Sku }

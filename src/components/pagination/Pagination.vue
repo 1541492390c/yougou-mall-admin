@@ -11,7 +11,6 @@ const currentChange = (value: number): void => {
 <template>
 	<div class='pagination'>
 		<el-pagination :total='props.total' :page-size='props.size' :current-page='props.current'
-									 @current-change='currentChange'
-									 small layout='prev, pager, next' background />
+									 @current-change='currentChange' small layout='prev, pager, next' background />
 	</div>
 </template>

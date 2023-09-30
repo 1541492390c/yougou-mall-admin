@@ -81,32 +81,30 @@ const formRules = reactive<FormRules>({
 </script>
 
 <template>
-	<div>
-		<el-dialog v-model='showDialog' :center='true' @close='closeDialog' style='width: 600px' title='修改密码'>
-			<el-form :model='formData' :rules='formRules' ref='formRef'>
-				<el-form-item prop='password'>
-					<el-input v-model='formData.password' show-password placeholder='请输入原密码' />
-				</el-form-item>
-				<el-form-item prop='newPassword'>
-					<el-input v-model='formData.newPassword' show-password placeholder='请输入新密码' />
-				</el-form-item>
-				<el-form-item prop='newPassword2'>
-					<el-input v-model='formData.newPassword2' show-password placeholder='请再次输入新密码' />
-				</el-form-item>
-				<el-form-item>
-					<div class='form-bottom'>
-						<el-button @click='updatePassword(formRef)' type='primary'>确认修改</el-button>
-					</div>
-				</el-form-item>
-			</el-form>
-		</el-dialog>
-	</div>
+	<el-dialog v-model='showDialog' :center='true' @close='closeDialog' style='width: 600px' title='修改密码'>
+		<el-form :model='formData' :rules='formRules' ref='formRef'>
+			<el-form-item prop='password'>
+				<el-input v-model='formData.password' show-password placeholder='请输入原密码' />
+			</el-form-item>
+			<el-form-item prop='newPassword'>
+				<el-input v-model='formData.newPassword' show-password placeholder='请输入新密码' />
+			</el-form-item>
+			<el-form-item prop='newPassword2'>
+				<el-input v-model='formData.newPassword2' show-password placeholder='请再次输入新密码' />
+			</el-form-item>
+			<el-form-item>
+				<div class='form-bottom'>
+					<el-button @click='updatePassword(formRef)' type='primary'>确认修改</el-button>
+				</div>
+			</el-form-item>
+		</el-form>
+	</el-dialog>
 </template>
 
 <style scoped lang='scss'>
 .form-bottom {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 </style>
