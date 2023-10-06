@@ -263,8 +263,8 @@ const deleteProduct = (value: number, index: number): void => {
 		<!--商品规格对话框-->
 		<product-sku-detail-dialog :show='showUpdateProductDialog' :product-id='currentProductId' @close-dialog='closeUpdateProductDialog' />
 		<!--更新商品封面对话框-->
-		<update-product-cover-dialog :product-id='currentProductId' :show='shopUpdateCoverDialog' :current-cover='currentCover'
-																 :img-list='currentImgList' :product='currentProduct' @close-dialog='closeUpdateCoverDialog' />
+		<update-product-cover-dialog :show='shopUpdateCoverDialog' :current-cover='currentCover' :img-list='currentImgList'
+																 :product='currentProduct' @close-dialog='closeUpdateCoverDialog' />
 	</div>
 </template>
 
