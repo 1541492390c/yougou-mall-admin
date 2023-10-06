@@ -1,13 +1,12 @@
 import request from '@/request'
 import { AxiosResponse } from 'axios'
-import { User } from '@/interface/user'
 
 // 添加管理员接口
-const addAdminApi = (user: User): Promise<AxiosResponse> => {
+const saveAdminApi = (value: { username: string, nickname: string, password: string, role: string }): Promise<AxiosResponse> => {
     return request({
         url: '/admin/user/save',
         method: 'POST',
-        data: user
+        data: value
     }, true)
 }
 
@@ -20,6 +19,7 @@ const getUserinfoApi = (): Promise<AxiosResponse> => {
 const getUserPagesApi = (
     pageNum: number = 1,
     pageSize: number = 10,
+    userType: number = 2,
     gender: number | undefined = undefined,
     state: number | undefined = undefined,
     nickname: string | undefined = undefined): Promise<AxiosResponse> => {
@@ -29,10 +29,27 @@ const getUserPagesApi = (
         params: {
             page_num: pageNum,
             page_size: pageSize,
+            user_type: userType,
             gender: gender,
             state: state,
             nickname: nickname
         }
+    }, true)
+}
+
+// 获取用户总数接口
+const getUserCountApi = (): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/user/count',
+        method: 'GET'
+    }, true)
+}
+
+// 获取用户统计信息接口
+const getUserStatisticsApi = (): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/user/statistics',
+        method: 'GET'
     }, true)
 }
 
@@ -48,4 +65,4 @@ const updateUserStateApi = (userId: number, state: number): Promise<AxiosRespons
     }, true)
 }
 
-export { addAdminApi, getUserinfoApi, getUserPagesApi, updateUserStateApi }
+export { saveAdminApi, getUserinfoApi, getUserPagesApi, getUserCountApi, getUserStatisticsApi, updateUserStateApi }

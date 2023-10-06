@@ -21,6 +21,7 @@ const currentCover = ref<string>('')
 const showUpdateProductDialog = ref<boolean>(false)
 const shopUpdateCoverDialog = ref<boolean>(false)
 const currentImgList = ref<Array<string>>([])
+const currentProduct = ref<Product>()
 const tableData = ref<Array<ProductTable>>([])
 const booleanOptions = ref<Array<any>>([
 	{label: '全部', value: undefined},
@@ -128,6 +129,7 @@ const openUpdateCoverDialog = (value: number): void => {
 	currentProductId.value = value
 	tableData.value.forEach((item: ProductTable) => {
 		if (item.productId === value) {
+			currentProduct.value = item
 			currentImgList.value = JSON.parse(item.imgList as string)
 			currentCover.value = item.cover
 			shopUpdateCoverDialog.value = true
@@ -259,12 +261,10 @@ const deleteProduct = (value: number, index: number): void => {
 		<!--分页组件-->
 		<pagination :total='total' :size='currentSize' :current='currentPage' @current-change='currentPageChange' />
 		<!--商品规格对话框-->
-		<product-sku-detail-dialog :show='showUpdateProductDialog' :product-id='currentProductId'
-															 @close-dialog='closeUpdateProductDialog' />
+		<product-sku-detail-dialog :show='showUpdateProductDialog' :product-id='currentProductId' @close-dialog='closeUpdateProductDialog' />
 		<!--更新商品封面对话框-->
-		<update-product-cover-dialog :product-id='currentProductId' :show='shopUpdateCoverDialog'
-																 :current-cover='currentCover' :img-list='currentImgList'
-																 @close-dialog='closeUpdateCoverDialog' />
+		<update-product-cover-dialog :product-id='currentProductId' :show='shopUpdateCoverDialog' :current-cover='currentCover'
+																 :img-list='currentImgList' :product='currentProduct' @close-dialog='closeUpdateCoverDialog' />
 	</div>
 </template>
 

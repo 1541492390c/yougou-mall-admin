@@ -12,15 +12,15 @@ interface Product {
     productId?: number,
     brandId?: number,
     state?: number,
-    price: number,
+    price?: number,
     discount: number | undefined,
-    discountPrice: number,
+    discountPrice?: number,
     categoryNode: string,
     name: string,
     cover: string,
     imgList?: string,
-    isDiscount: boolean,
-    recommended: boolean
+    isDiscount?: boolean,
+    recommended?: boolean
 }
 
 // 商品分类
@@ -50,7 +50,7 @@ interface Sku {
     discountPrice: number,
     description: string,
     isDiscount?: boolean,
-    skuSpecs: string
+    specs: string
 }
 
 export type { Brand, Product, Category, AttrValue, Sku }

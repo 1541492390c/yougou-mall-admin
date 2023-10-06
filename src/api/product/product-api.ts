@@ -2,6 +2,15 @@ import { AxiosResponse } from 'axios'
 import request from '@/request'
 import { Product } from '@/interface/product'
 
+// 保存商品接口
+const saveProductApi = (value: any): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/product/save',
+        method: 'POST',
+        data: value
+    }, true)
+}
+
 // 获取商品分页信息接口
 const getProductPagesApi = (
     pageNum: number = 1,
@@ -24,12 +33,11 @@ const getProductPagesApi = (
     })
 }
 
-// 保存商品接口
-const saveProductApi = (value: any): Promise<AxiosResponse> => {
+// 获取订单总数接口
+const getProductCountApi = (): Promise<AxiosResponse> => {
     return request({
-        url: '/admin/product/save',
-        method: 'POST',
-        data: value
+        url: '/admin/product/count',
+        method: 'GET'
     }, true)
 }
 
@@ -51,4 +59,4 @@ const deleteProductApi = (value: number): Promise<AxiosResponse> => {
     }, true)
 }
 
-export { getProductPagesApi, saveProductApi, updateProductApi, deleteProductApi }
+export { saveProductApi, getProductPagesApi, getProductCountApi, updateProductApi, deleteProductApi }

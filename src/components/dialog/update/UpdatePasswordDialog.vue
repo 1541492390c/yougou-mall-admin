@@ -2,10 +2,11 @@
 import { computed, reactive, ref } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { updatePasswordApi } from '@/api/auth/auth-api'
+import { UpdatePassTypeEnum } from '@/enums'
 
 const props = defineProps<{ show: boolean }>()
 const emits = defineEmits<{ (e: 'closeDialog'): void }>()
-const formRef = ref<FormInstance>()
+const form = ref<FormInstance>()
 const formData = reactive({
 	password: '',
 	newPassword: '',
@@ -17,7 +18,7 @@ const showDialog = computed(() => {
 })
 
 const closeDialog = (): void => {
-	formRef.value?.resetFields()
+	form.value?.resetFields()
 	emits('closeDialog')
 }
 
@@ -60,13 +61,16 @@ const updatePassword = (form: FormInstance | undefined): void => {
 	}
 	form.validate((valid) => {
 		if (valid) {
-			updatePasswordApi({password: formData.password, newPassword: formData.newPassword})
-							.then((res) => {
-								if (res) {
-									ElMessage.success('修改密码成功')
-									closeDialog()
-								}
-							}).catch((err) => {
+			updatePasswordApi({
+				updatePassType: UpdatePassTypeEnum.UPDATE,
+				password: formData.password,
+				newPassword: formData.newPassword
+			}).then((res) => {
+				if (res) {
+					ElMessage.success('修改密码成功')
+					closeDialog()
+				}
+			}).catch((err) => {
 				console.log(err)
 			})
 		}
@@ -81,20 +85,20 @@ const formRules = reactive<FormRules>({
 </script>
 
 <template>
-	<el-dialog v-model='showDialog' :center='true' @close='closeDialog' style='width: 600px' title='修改密码'>
-		<el-form :model='formData' :rules='formRules' ref='formRef'>
-			<el-form-item prop='password'>
+	<el-dialog v-model='showDialog' center @close='closeDialog' style='width: 600px' title='修改密码'>
+		<el-form :model='formData' :rules='formRules' ref='form' label-width='120'>
+			<el-form-item label='原密码' prop='password'>
 				<el-input v-model='formData.password' show-password placeholder='请输入原密码' />
 			</el-form-item>
-			<el-form-item prop='newPassword'>
+			<el-form-item label='新密码' prop='newPassword'>
 				<el-input v-model='formData.newPassword' show-password placeholder='请输入新密码' />
 			</el-form-item>
-			<el-form-item prop='newPassword2'>
+			<el-form-item label='再次确认新密码' prop='newPassword2'>
 				<el-input v-model='formData.newPassword2' show-password placeholder='请再次输入新密码' />
 			</el-form-item>
 			<el-form-item>
 				<div class='form-bottom'>
-					<el-button @click='updatePassword(formRef)' type='primary'>确认修改</el-button>
+					<el-button @click='updatePassword(form)' type='primary'>确认修改</el-button>
 				</div>
 			</el-form-item>
 		</el-form>

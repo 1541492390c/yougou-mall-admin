@@ -13,4 +13,15 @@ enum UploadFileTypeEnum {
     BRAND
 }
 
-export { ResponseCodeEnum, UploadFileTypeEnum }
+// 用户类型
+enum UserTypeEnum {
+    ADMIN = 1,
+    USER
+}
+
+// 更新密码类型
+enum UpdatePassTypeEnum {
+    UPDATE = 2
+}
+
+export { ResponseCodeEnum, UploadFileTypeEnum, UserTypeEnum, UpdatePassTypeEnum }

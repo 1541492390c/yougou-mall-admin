@@ -16,4 +16,19 @@ interface CouponTable extends Coupon {
     options: Array<number>
 }
 
-export type { ProductTable, BrandTable, CouponTable }
+// 订单统计数据
+interface OrderStatistics {
+    total: number,
+    totalAmount: number,
+    year: string,
+    month: string
+}
+
+// 订单统计数据
+interface UserStatistics {
+    total: number,
+    year: string,
+    month: string
+}
+
+export type { ProductTable, BrandTable, CouponTable, OrderStatistics, UserStatistics }

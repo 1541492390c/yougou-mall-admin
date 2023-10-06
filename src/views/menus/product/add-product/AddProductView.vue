@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, h, onMounted, reactive, ref, VNode, watch } from 'vue'
 import { AttrValue, Brand, Sku } from '@/interface/product'
-import { FormInstance, UploadRequestOptions, UploadUserFile } from 'element-plus'
+import { ElMessage, FormInstance, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { deleteFileApi, uploadFileApi } from '@/api/extra/resource-api'
 import { UploadFileTypeEnum } from '@/enums'
@@ -247,7 +247,7 @@ const addProduct = (form: FormInstance | undefined): void => {
 				if (keys[key] === 'price' || keys[key] === 'description' || keys[key] === 'skuStock') {
 					continue
 				}
-				specsObj[keys[key]] = obj[keys[key]]
+				specsObj[keys[key]] = obj[keys[key]].name
 			}
 			// 转为字符串格式
 			let specsStr: string = JSON.stringify(specsObj)
@@ -257,7 +257,7 @@ const addProduct = (form: FormInstance | undefined): void => {
 				price: obj.price,
 				discountPrice: obj.discountPrice,
 				description: obj.description,
-				skuSpecs: specsStr
+				specs: specsStr
 			}
 			// 是否折扣
 			if (!!formData.isDiscount) {
@@ -265,9 +265,6 @@ const addProduct = (form: FormInstance | undefined): void => {
 			}
 			skuList.push(sku)
 		}
-		console.log(formData)
-		console.log(skuList)
-		console.log(attrItem.value)
 
 		// 构建新增数据
 		let value: any = {...formData}
@@ -276,6 +273,15 @@ const addProduct = (form: FormInstance | undefined): void => {
 		// 保存
 		saveProductApi(value).then((res) => {
 			if (res) {
+				// 重置表单
+				form?.resetFields()
+				// 表头列表设置为空数组
+				tableColumnList.value.tableHeaderList = []
+				// 表内容列表设置为空数组
+				tableColumnList.value.tableBodyList = []
+				// 图片列表设置为空数组
+				fileList.value = []
+				ElMessage.success('添加成功')
 			}
 		}).catch((err) => {
 			console.log(err)

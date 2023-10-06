@@ -1,7 +1,7 @@
 // 认证授权账号信息
-interface AuthAuthAccount {
-    authAccountId: string,
-    userId: string,
+interface AuthAccount {
+    authAccountId: number,
+    userId: number,
     userType: number,
     username: string,
     mobile: string,
@@ -9,4 +9,4 @@ interface AuthAuthAccount {
     role: string
 }
 
-export type { AuthAuthAccount }
+export type { AuthAccount }

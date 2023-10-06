@@ -26,15 +26,6 @@ const routes: Array<RouteRecordRaw> = [
                     title: '首页'
                 }
             },
-            // 用户管理
-            {
-                path: 'user',
-                name: 'user',
-                component: () => import('@/views/menus/user/UserView.vue'),
-                meta: {
-                    title: '用户管理'
-                }
-            },
             // 用户反馈
             {
                 path: 'feedback',
@@ -52,6 +43,35 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '订单管理'
                 }
+            },
+            // 用户管理
+            {
+                path: 'user',
+                name: 'user',
+                component: () => import('@/views/menus/user/UserView.vue'),
+                meta: {
+                    title: '用户管理'
+                },
+                children: [
+                    // 用户-会员
+                    {
+                        path: 'user_management',
+                        name: 'user_management',
+                        component: () => import('@/views/menus/user/user-management/UserManagementView.vue'),
+                        meta: {
+                            title: '会员管理'
+                        }
+                    },
+                    // 用户-普通用户
+                    {
+                        path: 'admin_management',
+                        name: 'admin_management',
+                        component: () => import('@/views/menus/user/admin-management/AdminManagementView.vue'),
+                        meta: {
+                            title: '管理员管理'
+                        }
+                    },
+                ]
             },
             {
                 path: 'product',

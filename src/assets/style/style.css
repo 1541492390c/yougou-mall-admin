@@ -5,10 +5,6 @@ html, body, #app, .el-container {
   min-width: 1400px;
 }
 
-/*.el-input {*/
-/*  height: 42px;*/
-/*}*/
-
 .el-header {
   padding: 0 !important;
 }

@@ -19,6 +19,22 @@ const getOrderPagesApi = (
     }, true)
 }
 
+// 获取订单总数接口
+const getOrderCountApi = (): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/order/count',
+        method: 'GET'
+    }, true)
+}
+
+// 获取订单统计信息接口
+const getOrderStatisticsApi = (): Promise<AxiosResponse> => {
+    return request({
+        url: '/admin/order/statistics',
+        method: 'GET'
+    }, true)
+}
+
 // 更新订单状态接口
 const updateOrderStateApi = (orderId: number, state: number): Promise<AxiosResponse> => {
     return request({
@@ -31,4 +47,4 @@ const updateOrderStateApi = (orderId: number, state: number): Promise<AxiosRespo
     }, true)
 }
 
-export { getOrderPagesApi, updateOrderStateApi }
+export { getOrderPagesApi, getOrderCountApi, getOrderStatisticsApi, updateOrderStateApi }

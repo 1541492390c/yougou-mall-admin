@@ -1,7 +1,8 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
+import { Product } from '@/interface/product'
 
-const props = defineProps<{ show: boolean, productId: number, currentCover: string, imgList: Array<string> }>()
+const props = defineProps<{ show: boolean, currentCover: string, imgList: Array<string>, product: Product | undefined }>()
 const emits = defineEmits<{ (e: 'closeDialog'): void }>()
 const activeCover = ref<string>('')
 
@@ -21,10 +22,13 @@ const handleSelect = (value: string): void => {
 const closeDialog = (): void => {
 	emits('closeDialog')
 }
+
+const updateCover = (): void => {
+}
 </script>
 
 <template>
-	<el-dialog v-model='showDialog' title='商品封面' @open='openDialog' @close='closeDialog'>
+	<el-dialog v-model='showDialog' :center='true' @open='openDialog' @close='closeDialog' title='商品封面'>
 		<div class='product-img-container'>
 			<div v-for='(item, index) in imgList' :key='index'>
 				<img @click='handleSelect(item)' :src='item' alt=''
