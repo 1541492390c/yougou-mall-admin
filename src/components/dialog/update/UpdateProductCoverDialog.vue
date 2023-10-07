@@ -1,6 +1,8 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
 import { Product } from '@/interface/product'
+import { updateProductApi } from '@/api/product/product-api'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps<{ show: boolean, currentCover: string, imgList: Array<string>, product: Product | undefined }>()
 const emits = defineEmits<{ (e: 'closeDialog'): void }>()
@@ -23,7 +25,18 @@ const closeDialog = (): void => {
 	emits('closeDialog')
 }
 
+// 更新商品封面
 const updateCover = (): void => {
+	let value: Product = {...props.product} as Product
+	value.cover = activeCover.value
+	updateProductApi(value).then((res) => {
+		if (res) {
+			ElMessage.success('修改成功')
+			closeDialog()
+		}
+	}).catch((err) => {
+		console.log(err)
+	})
 }
 </script>
 
@@ -36,7 +49,7 @@ const updateCover = (): void => {
 			</div>
 		</div>
 		<div class='bottom'>
-			<el-button type='primary'>确定</el-button>
+			<el-button @click='updateCover' type='primary'>确定</el-button>
 		</div>
 	</el-dialog>
 </template>
