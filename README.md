@@ -1,18 +1,41 @@
-# Vue 3 + TypeScript + Vite
+<div align='center'>
+    <img src='https://gitee.com/chi-congmin/yougou-mall/raw/master/readme/img/yougou.png' alt='logo'>
+</div>
+##  介绍
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+毕业设计，一个基于Vue3、Element-Plus的前后端分离、包含了用户管理、商品管理、品牌管理、订单管理、分类管理等功能的商城后台管理平台项目。
 
-## Recommended IDE Setup
+##  目录结构
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+##  技术选型
 
-## Type Support For `.vue` Imports in TS
+|     技术     |       说明       |                             官网                             |
+| :----------: | :--------------: | :----------------------------------------------------------: |
+|     Vue3     |     前端框架     |                     https://cn.vuejs.org                     |
+|  Vue-Router  |     路由框架     |                 https://router.vuejs.org/zh                  |
+|     Vuex     | 全局状态管理框架 |                  https://vuex.vuejs.org/zh                   |
+| Element-Plus |    前端UI框架    |                https://element-plus.org/zh-CN                |
+|    Axios     |     HTTP框架     | [https://github.com/axios/axios](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Faxios%2Faxios) |
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+##  环境搭建
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+###  开发环境
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+| 工具 | 说明 | 版本号  |
+| :--: | :--: | :-----: |
+| Node | Node | 18.16.1 |
+
+##  部署
+
+- ###  安装node模块
+
+```
+npm install
+```
+
+###  运行
+
+```
+npm run dev
+```
+
