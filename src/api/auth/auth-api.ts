@@ -46,9 +46,9 @@ const updateAdminRoleApi = (authAccountId: number | undefined, role: string): Pr
 // 根据用户ID获取认证授权信息接口
 const getAuthByUserIdApi = (userId: number): Promise<AxiosResponse> => {
     return request({
-        url: '/admin/auth/get_by_user_id',
+        url: '/admin/auth/get_one',
         method: 'GET',
-        params: { user_id: userId }
+        params: {user_id: userId}
     }, true)
 }
 
