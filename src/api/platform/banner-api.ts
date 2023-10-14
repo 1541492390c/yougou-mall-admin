@@ -39,11 +39,10 @@ const updateBannerApi = (value: Banner): Promise<AxiosResponse> => {
 }
 
 // 删除轮播图接口
-const deleteBannerApi = (value: number): Promise<AxiosResponse> => {
+const deleteBannerApi = (id: number): Promise<AxiosResponse> => {
     return request({
-        url: '/admin/platform/banner/delete',
-        method: 'DELETE',
-        params: {banner_id: value}
+        url: `/admin/platform/banner/delete/${id}`,
+        method: 'DELETE'
     }, true)
 }
 

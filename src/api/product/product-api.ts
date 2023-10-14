@@ -51,11 +51,10 @@ const updateProductApi = (value: Product): Promise<AxiosResponse> => {
 }
 
 // 删除商品信息接口
-const deleteProductApi = (value: number): Promise<AxiosResponse> => {
+const deleteProductApi = (id: number): Promise<AxiosResponse> => {
     return request({
-        url: '/admin/product/delete',
-        method: 'DELETE',
-        params: {product_id: value}
+        url: `/admin/product/delete/${id}`,
+        method: 'DELETE'
     }, true)
 }
 

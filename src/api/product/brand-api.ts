@@ -47,11 +47,10 @@ const updateBrandApi = (value: Brand): Promise<AxiosResponse> => {
 }
 
 // 删除品牌信息接口
-const deleteBrandApi = (value: number): Promise<AxiosResponse> => {
+const deleteBrandApi = (id: number): Promise<AxiosResponse> => {
     return request({
-        url: '/admin/product/brand/delete',
-        method: 'DELETE',
-        params: {brand_id: value}
+        url: `/admin/product/brand/delete/${id}`,
+        method: 'DELETE'
     }, true)
 }
 

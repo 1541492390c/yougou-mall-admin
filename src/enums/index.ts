@@ -9,18 +9,23 @@ enum ResponseCodeEnum {
 
 // 上传资源类型
 enum UploadFileTypeEnum {
+    // 商品资源
     PRODUCT = 4,
+    // 品牌资源
     BRAND
 }
 
 // 用户类型
 enum UserTypeEnum {
+    // 管理员
     ADMIN = 1,
+    // 普通用户
     USER
 }
 
 // 更新密码类型
 enum UpdatePassTypeEnum {
+    // 更新
     UPDATE = 2
 }
 

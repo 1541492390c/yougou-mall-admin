@@ -41,11 +41,10 @@ const updateCouponApi = (value: Coupon): Promise<AxiosResponse> => {
 }
 
 // 删除优惠券接口
-const deleteCouponApi = (value: number): Promise<AxiosResponse> => {
+const deleteCouponApi = (id: number): Promise<AxiosResponse> => {
     return request({
-        url: '/admin/payment/coupon/delete',
-        method: 'DELETE',
-        params: {coupon_id: value}
+        url: `/admin/payment/coupon/delete/${id}`,
+        method: 'DELETE'
     }, true)
 }
 

@@ -28,11 +28,10 @@ const updateCategoryApi = (value: Category): Promise<AxiosResponse> => {
     }, true)
 }
 // 删除分类接口
-const deleteCategoryApi = (value: number): Promise<AxiosResponse> => {
+const deleteCategoryApi = (id: number): Promise<AxiosResponse> => {
     return request({
-        url: '/admin/product/category/delete',
-        method: 'DELETE',
-        params: {category_id: value}
+        url: `/admin/product/category/delete/${id}`,
+        method: 'DELETE'
     }, true)
 }
 
