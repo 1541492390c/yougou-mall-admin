@@ -1,6 +1,7 @@
 <div align='center'>
     <img src='https://gitee.com/chi-congmin/yougou-mall/raw/master/readme/img/yougou.png' alt='logo'>
 </div>
+
 ##  介绍
 
 毕业设计，一个基于Vue3、Element-Plus的前后端分离、包含了用户管理、商品管理、品牌管理、订单管理、分类管理等功能的商城后台管理平台项目。
