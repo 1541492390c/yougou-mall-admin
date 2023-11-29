@@ -65,3 +65,11 @@ npm run dev
 - 首页
 
   ![首页](https://gitee.com/chi-congmin/yougou-mall/raw/master/readme/img/admin/%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0-%E9%A6%96%E9%A1%B5.png)
+## 视频演示
+- b站链接：https://www.bilibili.com/video/BV1Zu411A7MX/
+
+## 项目链接
+
+- Java后端链接：https://gitee.com/chi-congmin/yougou-mall
+- 商城Web端链接：https://gitee.com/chi-congmin/yougou-mall-web
+- 管理平台端链接：https://gitee.com/chi-congmin/yougou-mall-admin
