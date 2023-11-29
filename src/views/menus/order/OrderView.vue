@@ -186,6 +186,7 @@ const updateOrderState = (orderId: number, index: number): void => {
 			</el-table-column>
 			<el-table-column label='操作' align='center'>
 				<template #default='scope'>
+					<el-button v-if='scope.row.state === 0' type='info' link disabled>订单已取消</el-button>
 					<el-button @click='updateOrderState(scope.row.orderId, scope.$index)' v-if='scope.row.state === 2' type='danger' link>发货</el-button>
 					<el-button v-if='scope.row.state === 3' type='info' link disabled>已发货,待客户接收</el-button>
 					<el-button v-if='scope.row.state === 4' type='success' link disabled>该订单已完成</el-button>

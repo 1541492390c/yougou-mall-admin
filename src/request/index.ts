@@ -22,7 +22,7 @@ const request = (config: AxiosRequestConfig, auth: boolean = false): Promise<Axi
     instance.interceptors.response.use((res: AxiosResponse): any => {
         if (res.data.code === ResponseCodeEnum.OK) {
             return res.data
-        } else if (res.data.code === ResponseCodeEnum.UN_VALID_TOKEN_ERROR || res.data.code === ResponseCodeEnum.UN_LOGIN_ERROR) {
+        } else if (res.data.code === ResponseCodeEnum.UN_VALID_TOKEN_ERROR || res.data.code === ResponseCodeEnum.UN_LOGIN_ERROR || res.data.code === ResponseCodeEnum.TOKEN_EXPIRED_ERROR) {
             localStorage.removeItem('token')
             ElMessage.error(res.data.message)
             // 跳转到登录页面
